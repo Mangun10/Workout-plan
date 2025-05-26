@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Week Interactive Workout Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Report Info: Weekly workout schedule. Goal: Navigate daily workouts. Viz/Method: HTML lists for exercises, sets, reps. Interaction: Click week tabs, then day cards to display details. Justification: Direct and clear presentation of core information. Library: Vanilla JS for content switching.
+        - Report Info: Progression principles. Goal: Inform user on how to progress. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Easy access to crucial guidance. Library: Vanilla JS for navigation.
+        - Report Info: Equipment list. Goal: Inform user of needs. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Essential setup information. Library: Vanilla JS for navigation.
+        - Report Info: Important Reminders. Goal: Provide holistic advice. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Key advice for success. Library: Vanilla JS for navigation.
+        - Report Info: Overall 5-week progression concept. Goal: Visualize planned intensity increase. Viz/Method: Line Chart (Chart.js) in Overview. Interaction: Static display. Justification: Provides a high-level overview of the plan's intensity arc. Library: Chart.js.
+        - Report Info: Distribution of workout types in a week. Goal: Show weekly balance. Viz/Method: Pie Chart (Chart.js) in Overview. Interaction: Static display. Justification: Illustrates the plan's structure. Library: Chart.js.
+        - CONFIRMING NO SVG/Mermaid, supporting the DESIGNED structure. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #343A40; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link.active { color: #007BFF; border-bottom-color: #007BFF; font-weight: 600; }
+        .week-tab.active { background-color: #007BFF; color: white; }
+        .day-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .day-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .day-card.active { border-color: #007BFF; background-color: #E7F3FF; }
+        .content-section { background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        /* Tailwind Customizations */
+        .bg-primary-light { background-color: #E7F3FF; }
+        .text-primary { color: #007BFF; }
+        .border-primary { border-color: #007BFF; }
+        .hover-bg-primary-dark:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-primary">Workout Plan</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" onclick="showSection('overview')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary active">Overview</a>
+                        <a href="#" onclick="showSection('weeklyPlan')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Weekly Plan</a>
+                        <a href="#" onclick="showSection('progressionPrinciples')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Progression</a>
+                        <a href="#" onclick="showSection('requiredEquipment')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Equipment</a>
+                        <a href="#" onclick="showSection('importantReminders')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Reminders</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" type="button" class="bg-gray-200 inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" onclick="showSection('overview'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 active">Overview</a>
+                <a href="#" onclick="showSection('weeklyPlan'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Weekly Plan</a>
+                <a href="#" onclick="showSection('progressionPrinciples'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Progression</a>
+                <a href="#" onclick="showSection('requiredEquipment'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Equipment</a>
+                <a href="#" onclick="showSection('importantReminders'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Reminders</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <section id="overview" class="main-content-section">
+            <div class="content-section p-6 mb-8">
+                <h1 class="text-3xl font-bold mb-4 text-primary">Welcome to Your 5-Week Workout Plan!</h1>
+                <p class="text-gray-700 mb-4">This interactive application provides a detailed day-by-day guide for your 5-week fitness journey. The plan is designed for maximum efficiency and results, fitting into an office gym schedule. Navigate through the sections to find your daily workouts, progression principles, equipment needs, and important reminders to help you succeed.</p>
+                <p class="text-gray-700">Remember to prioritize **form over weight** and always **listen to your body**. Consistency is key to achieving your fitness goals. Let's get started!</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="content-section p-6">
+                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">Conceptual Weekly Intensity</h2>
+                    <p class="text-sm text-gray-600 mb-4">This chart illustrates the planned increase in workout intensity or challenge over the 5 weeks. Actual progression will depend on your individual efforts and adherence to the plan.</p>
+                    <div class="chart-container">
+                        <canvas id="intensityChart"></canvas>
+                    </div>
+                </div>
+                <div class="content-section p-6">
+                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">Typical Weekly Workout Distribution</h2>
+                    <p class="text-sm text-gray-600 mb-4">This chart shows how workout days are generally distributed by type within a week in this plan.</p>
+                    <div class="chart-container">
+                        <canvas id="workoutDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="weeklyPlan" class="main-content-section hidden">
+            <div class="content-section p-6 mb-8">
+                 <h1 class="text-3xl font-bold mb-4 text-primary">Weekly Workout Schedule</h1>
+                 <p class="text-gray-700 mb-6">Select a week below to view the daily workout schedule. Each day's plan includes warm-up, main exercises with sets, reps, and specific notes, followed by a cool-down. The focus for each week is also highlighted to guide your training.</p>
+            </div>
+            <div class="mb-6 flex flex-wrap justify-center gap-2 sm:gap-3">
+                </div>
+            <div id="dailyWorkouts" class="mt-6">
+                </div>
+            <div id="workoutDetail" class="mt-8 content-section p-6 hidden">
+                </div>
+        </section>
+
+        <section id="progressionPrinciples" class="main-content-section hidden">
+            <div class="content-section p-6">
+                <h1 class="text-3xl font-bold mb-6 text-primary">Key Principles for Progression</h1>
+                <p class="text-gray-700 mb-4">To maximize your results over these 5 weeks, understanding and applying the principles of progressive overload is crucial. This means continually challenging your muscles so they adapt and grow stronger. Here’s how to approach it:</p>
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">1. Tracking is Essential</h2>
+                        <p class="text-gray-600">Keep a log (notebook or phone app) of the weights you lift and the reps you achieve for each exercise. This is how you'll track your progress and know when to increase the challenge.</p>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">2. Reps in Reserve (RIR)</h2>
+                        <p class="text-gray-600">This helps gauge your effort:</p>
+                        <ul class="list-disc list-inside text-gray-600 ml-4">
+                            <li><strong>RIR 3-2:</strong> You could have done 2-3 more reps. (Good for learning form, early weeks).</li>
+                            <li><strong>RIR 1-0:</strong> You could only do 0-1 more reps. (Pushing close to your limit, later weeks).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">3. Progressive Overload Methods</h2>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
+                            <li><strong>Increase Weight:</strong> The primary method. If you hit the top end of your rep range easily, increase the weight by the smallest increment available (e.g., 1kg, 2.5kg, or one plate on a machine).</li>
+                            <li><strong>Increase Reps:</strong> If you can't increase weight, try to get one or two more reps than last time within the target range.</li>
+                            <li><strong>Decrease Rest Time:</strong> For accessory work, you can slightly shorten rest periods (e.g., from 60s to 45s) to increase intensity. (Use sparingly, prioritize form and recovery).</li>
+                            <li><strong>Improve Form/Time Under Tension:</strong> Focus on slower, more controlled movements, especially the lowering (eccentric) phase of an exercise. Better form means better muscle activation.</li>
+                        </ul>
+                    </div>
+                     <p class="text-gray-700 mt-4">Remember, consistency and proper form are paramount. Never sacrifice form for heavier weight or more reps.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="requiredEquipment" class="main-content-section hidden">
+            <div class="content-section p-6">
+                <h1 class="text-3xl font-bold mb-6 text-primary">Required Equipment</h1>
+                <p class="text-gray-700 mb-4">Before you begin this 5-week workout plan, please ensure your office gym or workout space has access to the following equipment. Having the right tools will help you perform the exercises correctly and safely.</p>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Dumbbells:</strong> A good range of weights, ideally from 2.5kg up to at least 20-25kg (in 1kg, 2.5kg, or 5kg increments).</li>
+                    <li><strong>Barbell & Weight Plates:</strong> An Olympic barbell with various weight plates (e.g., 2.5kg, 5kg, 10kg, 20kg).</li>
+                    <li><strong>Adjustable Bench:</strong> A bench that can be set to flat, incline, and ideally decline positions.</li>
+                    <li><strong>Squat Rack / Power Rack / Smith Machine:</strong> For safely performing barbell squats and presses.</li>
+                    <li><strong>Cable Machine / Functional Trainer:</strong> With various attachments (D-handle, rope, straight bar).</li>
+                    <li><strong>Lat Pulldown Machine:</strong> For back exercises.</li>
+                    <li><strong>Seated Calf Raise Machine:</strong> Or a sturdy step/plate for standing calf raises.</li>
+                    <li><strong>Cardio Equipment:</strong> Treadmill, stationary bike, elliptical, or rower.</li>
+                    <li><strong>Mat:</strong> For core work and stretching.</li>
+                    <li><strong>Sturdy Chair:</strong> For chair squats.</li>
+                    <li><strong>Barbell Pad (Recommended):</strong> For comfort during Hip Thrusts.</li>
+                </ul>
+                 <p class="text-gray-700 mt-6">If your gym is missing a specific piece of equipment, check the exercise notes for potential alternatives or focus on performing the exercise with excellent form using what's available. Some exercises can be adapted (e.g., cable exercises with dumbbells).</p>
+            </div>
+        </section>
+
+        <section id="importantReminders" class="main-content-section hidden">
+            <div class="content-section p-6">
+                <h1 class="text-3xl font-bold mb-6 text-primary">Important Reminders for Your 5 Weeks</h1>
+                <p class="text-gray-700 mb-4">To get the most out of this 5-week plan and ensure you're supporting your body effectively, keep these crucial reminders in mind:</p>
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">Nutrition</h2>
+                        <p class="text-gray-600">Prioritize protein intake (aim for 1.6–2.2g per kg of your body weight) to support muscle repair and growth. Fuel your body with whole, unprocessed foods. Stay well-hydrated by drinking plenty of water throughout the day.</p>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">Sleep</h2>
+                        <p class="text-gray-600">Aim for 7–9 hours of quality sleep per night. Sleep is when your body recovers, repairs muscle tissue, and consolidates learning. It's crucial for performance and results.</p>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">Consistency</h2>
+                        <p class="text-gray-600">The key to seeing results is showing up and putting in the effort consistently. Stick to the schedule as much as possible. Even on days you don't feel 100%, a lighter workout or active recovery is often better than skipping entirely (unless you genuinely need rest).</p>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-800">Listen to Your Body</h2>
+                        <p class="text-gray-600">If you feel sharp pain during an exercise, stop immediately. Differentiate between muscle soreness (normal) and joint pain (a warning sign). If you're overly fatigued or feeling unwell, consider an extra rest day or slightly reducing the volume/intensity of your workout. It's a 5-week plan, but don't push through significant pain or illness, as this can lead to injury or burnout.</p>
+                    </div>
+                     <p class="text-gray-700 mt-4">By paying attention to these areas alongside your training, you'll set yourself up for a successful and rewarding 5 weeks!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 mt-12">
+        <p>&copy; 2025 Interactive Workout Plan. Stay Strong!</p>
+    </footer>
+
+    <script>
+        const workoutData = {
+            "Week 1": {
+                focus: "Foundation & Form Mastery. Aim for 2-3 Reps in Reserve (RIR) on most sets.",
+                days: {
+                    "Monday, May 26, 2025": {
+                        title: "Upper Body Power",
+                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
+                        mainWorkout: [
+                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8 reps", notes: "Focus on controlled movement and feeling your chest work." },
+                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8 reps", notes: "Squeeze your shoulder blades together at the top." },
+                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6 reps", notes: "Controlled lowering (eccentric phase)." },
+                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10 reps", notes: "Pull with your back muscles, not just your arm." },
+                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10 reps", notes: "" },
+                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10 reps", notes: "Perform back-to-back with minimal rest between exercises, then rest before the next superset." }
+                        ],
+                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
+                    },
+                    "Tuesday, May 27, 2025": {
+                        title: "Lower Body Foundation",
+                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Back Squat", setsReps: "4 sets × 6 reps", notes: "Focus on depth (hips below knees) and bracing your core." },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6 reps", notes: "Feel the stretch in your hamstrings; keep a slight bend in your knees." },
+                            { name: "Walking Lunges", setsReps: "3 sets × 6 reps per leg", notes: "Maintain balance and control." },
+                            { name: "Seated Calf Raise", setsReps: "4 sets × 12 reps", notes: "Full range of motion, squeeze at the top." },
+                            { name: "Decline Crunches", setsReps: "4 sets × 12 reps", notes: "Focus on core contraction, avoid pulling with your neck." }
+                        ],
+                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
+                    },
+                    "Wednesday, May 28, 2025": {
+                        title: "Upper Body Volume",
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Bench Press", setsReps: "3 sets × 4 reps (heavy but controlled)", notes: "Focus on a stable base and controlled lowering to your chest." },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 8 reps", notes: "Pull the bar down using your lats, not just your arms." },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8 reps", notes: "Controlled descent, keep your core tight." },
+                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10 reps", notes: "Lead with your elbows, avoid shrugging." },
+                            { name: "Face Pulls", setsReps: "3 sets × 10 reps", notes: "Pull towards your face, externally rotate your shoulders to engage rear delts." }
+                        ],
+                        coolDown: ["Stretching: chest, back, shoulders."]
+                    },
+                    "Thursday, May 29, 2025": {
+                        title: "Active Recovery/Cardio",
+                        warmUp: ["Light cardio: 5 min"],
+                        mainWorkout: [
+                            { name: "Steady-State Cardio", setsReps: "20–30 min (elliptical, bike, or jog)", notes: "Maintain a conversational pace." },
+                            { name: "Mobility Drills", setsReps: "10 min (hip openers, shoulder mobility, dynamic stretches)", notes: "Focus on improving your range of motion." },
+                            { name: "Core Circuit: Plank", setsReps: "3 sets × 45–60 sec", notes: "Keep a straight line from head to heels." },
+                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15 reps per side", notes: "Focus on twisting your torso." },
+                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15 reps", notes: "Keep your lower back pressed into the floor. Perform core exercises back-to-back with minimal rest, then rest before the next circuit." }
+                        ],
+                        coolDown: ["Stretching: full body."]
+                    },
+                    "Friday, May 30, 2025": {
+                        title: "Full Body Power",
+                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Squats", setsReps: "3 sets × 6 reps", notes: "Can be barbell or dumbbell. Focus on form." },
+                            { name: "Dumbbell Row", setsReps: "3 sets × 8 reps", notes: "Full stretch at the bottom, pull with your back." },
+                            { name: "Hip Thrusts", setsReps: "3 sets × 10 reps", notes: "Squeeze your glutes hard at the top." },
+                            { name: "Seated Cable Fly", setsReps: "3 sets × 10 reps", notes: "Feel the contraction in your chest." },
+                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15 reps", notes: "" },
+                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: legs, back, chest."]
+                    },
+                    "Saturday, May 31, 2025": {
+                        title: "Functional Movement",
+                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
+                        mainWorkout: [
+                            { name: "Glute Bridge", setsReps: "2 sets × 10–15 reps", notes: "" },
+                            { name: "Chair Squats", setsReps: "2 sets × 10–15 reps", notes: "" },
+                            { name: "Stationary Lunges", setsReps: "2 sets × 10–15 reps per leg", notes: "" },
+                            { name: "Plank to Downward Dog", setsReps: "2 sets × 10–15 reps (or 30–45 sec hold)", notes: "" },
+                            { name: "Optional: Light cardio", setsReps: "(walking, cycling)", notes: "if feeling fresh." }
+                        ],
+                        coolDown: ["Stretching: hips, legs, back."]
+                    },
+                    "Sunday, June 1, 2025": {
+                        title: "Complete Rest",
+                        warmUp: [],
+                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Optional: Gentle stretching or light walking. Focus on recovery." }],
+                        coolDown: []
+                    }
+                }
+            },
+            "Week 2": {
+                focus: "Increasing Reps & Slightly Heavier. Aim for 1-2 RIR.",
+                days: {
+                    "Monday, June 2, 2025": {
+                        title: "Upper Body Power",
+                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
+                        mainWorkout: [
+                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-10 reps", notes: "Try to get 10 reps. If you hit 10 easily, consider a 1-2.5kg increase per dumbbell next week." },
+                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-10 reps", notes: "" },
+                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "If 6 reps were easy last week, aim for 7-8 reps this week." },
+                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
+                    },
+                     "Tuesday, June 3, 2025": {
+                        title: "Lower Body Foundation",
+                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Push for more reps (7-8). If 6 reps felt very light last week, consider a 2.5-5kg weight increase." },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "" },
+                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "" },
+                            { name: "Seated Calf Raise", setsReps: "4 sets × 13-15 reps", notes: "" },
+                            { name: "Decline Crunches", setsReps: "4 sets × 13-15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
+                    },
+                    "Wednesday, June 4, 2025": {
+                        title: "Upper Body Volume",
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Bench Press", setsReps: "3 sets × 5-6 reps", notes: "If 4 reps were easy last week, aim for 5 or 6 reps this week. If you hit 6 easily, consider a 2.5-5kg increase next week." },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 9-12 reps", notes: "" },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 9-12 reps", notes: "" },
+                            { name: "Cable Lateral Raise", setsReps: "3 sets × 11-12 reps", notes: "" },
+                            { name: "Face Pulls", setsReps: "3 sets × 11-12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: chest, back, shoulders."]
+                    },
+                    "Thursday, June 5, 2025": {
+                        title: "Active Recovery/Cardio",
+                        warmUp: ["Light cardio: 5 min"],
+                        mainWorkout: [
+                            { name: "Steady-State Cardio", setsReps: "25–35 min", notes: "Increase duration by 5 minutes or slightly increase intensity (faster pace, higher incline)." },
+                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
+                            { name: "Core Circuit: Plank", setsReps: "3 sets × 45–60 sec", notes: "" },
+                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15 reps per side", notes: "" },
+                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: full body."]
+                    },
+                    "Friday, June 6, 2025": {
+                        title: "Full Body Power",
+                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "" },
+                            { name: "Dumbbell Row", setsReps: "3 sets × 9-12 reps", notes: "" },
+                            { name: "Hip Thrusts", setsReps: "3 sets × 12-15 reps", notes: "" },
+                            { name: "Seated Cable Fly", setsReps: "3 sets × 12-15 reps", notes: "" },
+                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 16-20 reps", notes: "" },
+                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 13-15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: legs, back, chest."]
+                    },
+                    "Saturday, June 7, 2025": {
+                        title: "Functional Movement",
+                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
+                        mainWorkout: [
+                            { name: "Glute Bridge", setsReps: "2 sets × 10–15 reps", notes: "" },
+                            { name: "Chair Squats", setsReps: "2 sets × 10–15 reps", notes: "" },
+                            { name: "Stationary Lunges", setsReps: "2 sets × 10–15 reps per leg", notes: "" },
+                            { name: "Plank to Downward Dog", setsReps: "2 sets × 10–15 reps (or 30–45 sec hold)", notes: "" },
+                            { name: "Optional:", setsReps: "Add an extra set to 1-2 exercises if time and energy permit (e.g., Glute Bridge 3 sets instead of 2).", notes: "" }
+                        ],
+                        coolDown: ["Stretching: hips, legs, back."]
+                    },
+                    "Sunday, June 8, 2025": {
+                        title: "Complete Rest",
+                        warmUp: [],
+                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
+                        coolDown: []
+                    }
+                }
+            },
+            "Week 3": {
+                focus: "Increased Weight & Pushing Reps. Aim for 1 RIR on compound lifts, 1-2 RIR on accessory.",
+                 days: {
+                    "Monday, June 9, 2025": {
+                        title: "Upper Body Power",
+                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
+                        mainWorkout: [
+                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight if you hit 10-12 reps easily last week. Aim for 8 reps with the new, heavier weight." },
+                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
+                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Increase weight. Aim for 6 reps with the new, heavier weight." },
+                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." },
+                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "Increase weight if 12 reps were easy." },
+                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." }
+                        ],
+                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
+                    },
+                     "Tuesday, June 10, 2025": {
+                        title: "Lower Body Foundation",
+                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Significant weight increase from last week, aiming for 6 reps with this new weight." },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Increase weight." },
+                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "Consider holding slightly heavier dumbbells if previous sets were easy." },
+                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "Increase weight." },
+                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "Increase difficulty by holding a light weight or performing slower." }
+                        ],
+                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
+                    },
+                    "Wednesday, June 11, 2025": {
+                        title: "Upper Body Volume",
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Increase weight, even if it means hitting 4 reps with the new load." },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
+                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "Increase weight, focus on controlled form." },
+                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." }
+                        ],
+                        coolDown: ["Stretching: chest, back, shoulders."]
+                    },
+                    "Thursday, June 12, 2025": {
+                        title: "Active Recovery/Cardio",
+                        warmUp: ["Light cardio: 5 min"],
+                        mainWorkout: [
+                            { name: "Steady-State Cardio", setsReps: "Maintain increased duration or slightly higher intensity.", notes: "" },
+                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
+                            { name: "Core Circuit: Plank", setsReps: "3 sets × 60–75 sec", notes: "Aim for slightly longer holds." },
+                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15+ reps per side", notes: "More reps or slower tempo." },
+                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15+ reps", notes: "More reps or slower tempo." }
+                        ],
+                        coolDown: ["Stretching: full body."]
+                    },
+                    "Friday, June 13, 2025": {
+                        title: "Full Body Power",
+                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "Increase weight." },
+                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
+                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "Increase weight on the bar." },
+                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "Increase weight." },
+                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "Increase weight." },
+                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "Increase weight." }
+                        ],
+                        coolDown: ["Stretching: legs, back, chest."]
+                    },
+                    "Saturday, June 14, 2025": {
+                        title: "Functional Movement",
+                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
+                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
+                        coolDown: ["Stretching: hips, legs, back."]
+                    },
+                    "Sunday, June 15, 2025": {
+                        title: "Complete Rest",
+                        warmUp: [],
+                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
+                        coolDown: []
+                    }
+                }
+            },
+            "Week 4": {
+                focus: "Pushing Limits & Minor Adjustments. Aim for 0-1 RIR on compound lifts, 1 RIR on accessory.",
+                days: {
+                    "Monday, June 16, 2025": {
+                        title: "Upper Body Power",
+                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
+                        mainWorkout: [
+                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Push for the higher rep count or another weight jump." },
+                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Push hard on the final set." },
+                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
+                    },
+                    "Tuesday, June 17, 2025": {
+                        title: "Lower Body Foundation",
+                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Aim for a weight increase or hitting 8 reps with your current challenging weight." },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "" },
+                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "" },
+                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "" },
+                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
+                    },
+                    "Wednesday, June 18, 2025": {
+                        title: "Upper Body Volume",
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Push for a small weight increase or hitting 6 reps with your current challenging weight." },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: chest, back, shoulders."]
+                    },
+                    "Thursday, June 19, 2025": {
+                        title: "Active Recovery/Cardio",
+                        warmUp: ["Light cardio: 5 min"],
+                        mainWorkout: [
+                            { name: "Steady-State Cardio", setsReps: "Potentially increase intensity further or try to maintain the higher duration at a faster pace.", notes: "" },
+                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
+                            { name: "Core Circuit", setsReps: "Try to complete the circuit with minimal rest between exercises.", notes: "Plank: 3 sets x 60-75s, Bicycle Crunches: 3 sets x 15+ reps/side, Leg Raises: 3 sets x 12-15+ reps" }
+                        ],
+                        coolDown: ["Stretching: full body."]
+                    },
+                    "Friday, June 20, 2025": {
+                        title: "Full Body Power",
+                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "" },
+                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "" },
+                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "" },
+                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "" },
+                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: legs, back, chest."]
+                    },
+                     "Saturday, June 21, 2025": {
+                        title: "Functional Movement",
+                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
+                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
+                        coolDown: ["Stretching: hips, legs, back."]
+                    },
+                    "Sunday, June 22, 2025": {
+                        title: "Complete Rest",
+                        warmUp: [],
+                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
+                        coolDown: []
+                    }
+                }
+            },
+            "Week 5": {
+                focus: "Peak Performance & Max Effort. Aim for 0 RIR on the last set of compound lifts. Consider advanced techniques if form is perfect.",
+                days: {
+                    "Monday, June 23, 2025": {
+                        title: "Upper Body Power",
+                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
+                        mainWorkout: [
+                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Push for a weight PB or higher reps; consider Rest-Pause on the final set (rest 10-15s, then do 2-3 more reps)." },
+                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "Aim for highest weight/reps." },
+                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Push for a weight PB; consider Rest-Pause on the final set." },
+                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "Consider a Dropset on the final set (reduce weight by 20-30%, then max reps)." },
+                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "Consider a Dropset on the final set." }
+                        ],
+                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
+                    },
+                    "Tuesday, June 24, 2025": {
+                        title: "Lower Body Foundation",
+                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Aim for a weight PB or hitting 8 reps with challenging weight; consider Rest-Pause on the final set." },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Aim for weight PB." },
+                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "Aim for heavier dumbbells." },
+                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "Max weight/reps." },
+                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "Max reps/difficulty." }
+                        ],
+                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
+                    },
+                    "Wednesday, June 25, 2025": {
+                        title: "Upper Body Volume",
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Aim for a weight PB or hitting 6 reps; consider Rest-Pause on the final set." },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Aim for max weight/reps." },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Aim for max weight/reps." },
+                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "" },
+                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: chest, back, shoulders."]
+                    },
+                    "Thursday, June 26, 2025": {
+                        title: "Active Recovery/Cardio",
+                        warmUp: ["Light cardio: 5 min"],
+                        mainWorkout: [
+                            { name: "Steady-State Cardio", setsReps: "Go for a strong, consistent effort.", notes: "" },
+                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
+                            { name: "Core Circuit", setsReps: "Maintain consistency.", notes: "Plank: 3 sets x 60-75s, Bicycle Crunches: 3 sets x 15+ reps/side, Leg Raises: 3 sets x 12-15+ reps" }
+                        ],
+                        coolDown: ["Stretching: full body."]
+                    },
+                    "Friday, June 27, 2025": {
+                        title: "Full Body Power",
+                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
+                        mainWorkout: [
+                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "Push for max weight/reps." },
+                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "Aim for max weight/reps." },
+                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "" },
+                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "" },
+                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "" }
+                        ],
+                        coolDown: ["Stretching: legs, back, chest."]
+                    },
+                    "Saturday, June 28, 2025": {
+                        title: "Functional Movement",
+                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
+                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
+                        coolDown: ["Stretching: hips, legs, back."]
+                    },
+                    "Sunday, June 29, 2025": {
+                        title: "Complete Rest",
+                        warmUp: [],
+                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Enjoy the results of your hard work!" }],
+                        coolDown: []
+                    }
+                }
+            }
+        };
+
+        let currentWeek = "Week 1";
+        let currentDay = null;
+
+        const weekTabsContainer = document.querySelector('#weeklyPlan .flex-wrap');
+        const dailyWorkoutsContainer = document.getElementById('dailyWorkouts');
+        const workoutDetailContainer = document.getElementById('workoutDetail');
+        const mainContentSections = document.querySelectorAll('.main-content-section');
+        const navLinks = document.querySelectorAll('header .nav-link');
+        const mobileMenuButton = document.querySelector('.md\\:hidden button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function showSection(sectionId) {
+            mainContentSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(sectionId)) {
+                    link.classList.add('active');
+                }
+            });
+             // Close mobile menu after selection
+            if (!mobileMenu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+            window.scrollTo(0,0); // Scroll to top
+        }
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+            const icons = mobileMenuButton.querySelectorAll('svg');
+            icons[0].classList.toggle('hidden');
+            icons[1].classList.toggle('hidden');
+        }
+
+
+        function displayWeekTabs() {
+            weekTabsContainer.innerHTML = '';
+            Object.keys(workoutData).forEach(weekName => {
+                const tab = document.createElement('button');
+                tab.textContent = weekName;
+                tab.className = `week-tab px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-medium rounded-md shadow-sm focus:outline-none ${weekName === currentWeek ? 'active bg-primary text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+                tab.onclick = () => selectWeek(weekName);
+                weekTabsContainer.appendChild(tab);
+            });
+        }
+
+        function selectWeek(weekName) {
+            currentWeek = weekName;
+            currentDay = null; 
+            displayWeekTabs();
+            displayDayCards();
+            workoutDetailContainer.classList.add('hidden');
+            workoutDetailContainer.innerHTML = '';
+        }
+
+        function displayDayCards() {
+            dailyWorkoutsContainer.innerHTML = '';
+            const week = workoutData[currentWeek];
+            if (!week) return;
+
+            const focusEl = document.createElement('p');
+            focusEl.className = 'text-center text-gray-600 italic mb-6 px-2';
+            focusEl.textContent = `Focus for ${currentWeek}: ${week.focus}`;
+            dailyWorkoutsContainer.appendChild(focusEl);
+            
+            const daysGrid = document.createElement('div');
+            daysGrid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4';
+
+            Object.keys(week.days).forEach(dayName => {
+                const dayData = week.days[dayName];
+                const card = document.createElement('div');
+                card.className = `day-card p-3 sm:p-4 rounded-lg border-2 border-gray-300 cursor-pointer text-center ${dayName === currentDay ? 'active' : 'bg-white hover:bg-gray-50'}`;
+                card.innerHTML = `<h3 class="font-semibold text-sm sm:text-base text-gray-800">${dayName.split(',')[0]}</h3><p class="text-xs sm:text-sm text-gray-500">${dayData.title}</p>`;
+                card.onclick = () => selectDay(dayName);
+                daysGrid.appendChild(card);
+            });
+            dailyWorkoutsContainer.appendChild(daysGrid);
+        }
+
+        function selectDay(dayName) {
+            currentDay = dayName;
+            displayDayCards(); // Re-render to highlight active day
+            displayWorkoutDetail(dayName);
+        }
+
+        function formatList(items, listType = 'ul') {
+            if (!items || items.length === 0) return '<p class="text-gray-500">None specified.</p>';
+            return `<${listType} class="list-disc list-inside space-y-1 text-gray-700 ml-4">` +
+                   items.map(item => `<li>${item}</li>`).join('') +
+                   `</${listType}>`;
+        }
+        
+        function displayWorkoutDetail(dayName) {
+            const dayData = workoutData[currentWeek].days[dayName];
+            if (!dayData) {
+                workoutDetailContainer.innerHTML = '<p>No workout details found for this day.</p>';
+                workoutDetailContainer.classList.remove('hidden');
+                return;
+            }
+
+            let html = `<h2 class="text-2xl font-bold mb-1 text-primary">${dayName}</h2>`;
+            html += `<h3 class="text-xl font-semibold mb-4 text-gray-800">${dayData.title}</h3>`;
+
+            if (dayData.warmUp && dayData.warmUp.length > 0) {
+                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Warm-up:</h4>';
+                html += formatList(dayData.warmUp);
+            }
+
+            if (dayData.mainWorkout && dayData.mainWorkout.length > 0) {
+                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Main Workout:</h4>';
+                html += '<ul class="space-y-3">';
+                dayData.mainWorkout.forEach(ex => {
+                    html += `<li class="p-3 bg-gray-50 rounded-md">
+                                <strong class="text-gray-800">${ex.name}</strong>: ${ex.setsReps}
+                                ${ex.notes ? `<p class="text-sm text-gray-600 italic mt-1">${ex.notes}</p>` : ''}
+                             </li>`;
+                });
+                html += '</ul>';
+            }
+
+            if (dayData.coolDown && dayData.coolDown.length > 0) {
+                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Cool-down:</h4>';
+                html += formatList(dayData.coolDown);
+            }
+            
+            workoutDetailContainer.innerHTML = html;
+            workoutDetailContainer.classList.remove('hidden');
+        }
+
+        // Chart.js Initialization
+        function initCharts() {
+            const intensityCtx = document.getElementById('intensityChart').getContext('2d');
+            new Chart(intensityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [{
+                        label: 'Conceptual Intensity Level',
+                        data: [60, 70, 80, 90, 95], // Example data
+                        borderColor: '#007BFF',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Relative Intensity (%)'} } }
+                }
+            });
+
+            const distributionCtx = document.getElementById('workoutDistributionChart').getContext('2d');
+            new Chart(distributionCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Upper Body', 'Lower Body', 'Full Body', 'Active Recovery', 'Rest'],
+                    datasets: [{
+                        label: 'Workout Distribution',
+                        data: [2, 1, 1, 1, 2], // Example: Mon, Wed (Upper), Tue (Lower), Fri (Full), Thu (Active), Sat(Functional/Light), Sun(Rest)
+                        backgroundColor: ['#007BFF', '#28A745', '#FFC107', '#17A2B8', '#6C757D'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                     plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + ' day(s)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('overview'); // Show overview by default
+            selectWeek("Week 1"); // Load Week 1 by default in the weekly plan section
+            initCharts();
+        });
+
+    </script>
+</body>
+</html>
