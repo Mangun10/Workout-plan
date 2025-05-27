@@ -785,7 +785,7 @@
                     html += `<li class="p-3 bg-gray-50 rounded-md flex items-center flex-wrap">
                                 <strong class="text-gray-800">${ex.name}</strong>: ${ex.setsReps}
                                 <button class="llm-button" onclick="explainExercise('${ex.name}', 'llm-response-${exerciseId}')">Explain ✨</button>
-                                <input type="text" id="weight-input-${exerciseId}" class="weight-input" placeholder="Weight (e.g., 10kg)" value="${storedWeight}" oninput="updateWeight('${exerciseId}')">
+                                <input type="text" id="weight-input-${exerciseId}" class="weight-input" placeholder="Weight (e.g., 10kg)" value="${storedWeight}" onchange="updateWeight('${exerciseId}')">
                                 ${ex.notes ? `<p class="text-sm text-gray-600 italic mt-1 w-full">${ex.notes}</p>` : ''}
                                 <div id="llm-response-${exerciseId}" class="llm-response hidden w-full mt-2"></div>
                              </li>`;
