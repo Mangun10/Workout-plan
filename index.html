@@ -13,6 +13,10 @@
         - Report Info: Important Reminders. Goal: Provide holistic advice. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Key advice for success. Library: Vanilla JS for navigation.
         - Report Info: Overall 5-week progression concept. Goal: Visualize planned intensity increase. Viz/Method: Line Chart (Chart.js) in Overview. Interaction: Static display. Justification: Provides a high-level overview of the plan's intensity arc. Library: Chart.js.
         - Report Info: Distribution of workout types in a week. Goal: Show weekly balance. Viz/Method: Pie Chart (Chart.js) in Overview. Interaction: Static display. Justification: Illustrates the plan's structure. Library: Chart.js.
+        - New Feature: Workout Completion. Goal: Allow users to mark days as complete. Viz/Method: Button on daily workout detail. Interaction: Click button turns day card green. Justification: Provides visual feedback and motivation. Library: Vanilla JS, local storage.
+        - New Feature: Weight Tracking. Goal: Allow users to record weights used per exercise. Viz/Method: Text input next to each exercise. Interaction: User types weight, it's displayed. Justification: Enables personal tracking for progressive overload. Library: Vanilla JS, local storage.
+        - New Feature: ✨ Exercise Explainer. Goal: Provide quick form tips/explanation for exercises. Viz/Method: Button next to exercise, displays text. Interaction: Click button. Justification: Enhances understanding and proper execution. Library: Gemini API (LLM).
+        - New Feature: ✨ Daily Pep Talk. Goal: Provide motivational message. Viz/Method: Button, displays text. Interaction: Click button. Justification: Boosts user morale and consistency. Library: Gemini API (LLM).
         - CONFIRMING NO SVG/Mermaid, supporting the DESIGNED structure. -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #343A40; }
@@ -22,6 +26,7 @@
         .day-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
         .day-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .day-card.active { border-color: #007BFF; background-color: #E7F3FF; }
+        .day-card.completed-day { background-color: #D4EDDA; border-color: #28A745; }
         .content-section { background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
         .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
         @media (min-width: 768px) { .chart-container { height: 350px; } }
@@ -30,6 +35,63 @@
         .text-primary { color: #007BFF; }
         .border-primary { border-color: #007BFF; }
         .hover-bg-primary-dark:hover { background-color: #0056b3; }
+        .complete-button {
+            background-color: #28A745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .complete-button:hover {
+            background-color: #218838;
+        }
+        .complete-button.completed {
+            background-color: #6C757D;
+        }
+        .complete-button.completed:hover {
+            background-color: #5A6268;
+        }
+        .weight-input {
+            width: 80px;
+            padding: 4px 8px;
+            border: 1px solid #CCC;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-size: 0.875rem;
+        }
+        .weight-display {
+            font-weight: 500;
+            color: #007BFF;
+            margin-left: 5px;
+        }
+        .llm-button {
+            background-color: #6A0DAD; /* Purple */
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .llm-button:hover {
+            background-color: #4B0082; /* Darker Purple */
+        }
+        .llm-response {
+            background-color: #f0f0f0;
+            border-left: 4px solid #6A0DAD;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .llm-loading {
+            color: #6A0DAD;
+            font-style: italic;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -467,7 +529,7 @@
                         warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
                         mainWorkout: [
                             { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Aim for a weight increase or hitting 8 reps with your current challenging weight." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "" },
+                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Keep a slight bend in your knees." },
                             { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "" },
                             { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "" },
                             { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "" }
@@ -476,11 +538,11 @@
                     },
                     "Wednesday, June 18, 2025": {
                         title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
                         mainWorkout: [
                             { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Push for a small weight increase or hitting 6 reps with your current challenging weight." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "" },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "" },
+                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
+                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
                             { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "" },
                             { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "" }
                         ],
@@ -553,7 +615,7 @@
                     },
                     "Wednesday, June 25, 2025": {
                         title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
+                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
                         mainWorkout: [
                             { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Aim for a weight PB or hitting 6 reps; consider Rest-Pause on the final set." },
                             { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Aim for max weight/reps." },
@@ -625,11 +687,10 @@
                     link.classList.add('active');
                 }
             });
-             // Close mobile menu after selection
-            if (!mobileMenu.classList.contains('hidden')) {
+             if (!mobileMenu.classList.contains('hidden')) {
                 toggleMobileMenu();
             }
-            window.scrollTo(0,0); // Scroll to top
+            window.scrollTo(0,0);
         }
 
         function toggleMobileMenu() {
@@ -653,7 +714,7 @@
 
         function selectWeek(weekName) {
             currentWeek = weekName;
-            currentDay = null; 
+            currentDay = null;
             displayWeekTabs();
             displayDayCards();
             workoutDetailContainer.classList.add('hidden');
@@ -676,7 +737,9 @@
             Object.keys(week.days).forEach(dayName => {
                 const dayData = week.days[dayName];
                 const card = document.createElement('div');
-                card.className = `day-card p-3 sm:p-4 rounded-lg border-2 border-gray-300 cursor-pointer text-center ${dayName === currentDay ? 'active' : 'bg-white hover:bg-gray-50'}`;
+                const isCompleted = localStorage.getItem(`${currentWeek}-${dayName}-completed`) === 'true';
+                card.className = `day-card p-3 sm:p-4 rounded-lg border-2 border-gray-300 cursor-pointer text-center ${dayName === currentDay ? 'active' : 'bg-white hover:bg-gray-50'} ${isCompleted ? 'completed-day' : ''}`;
+                card.id = `card-${currentWeek}-${dayName.replace(/[^a-zA-Z0-9]/g, '-')}`;
                 card.innerHTML = `<h3 class="font-semibold text-sm sm:text-base text-gray-800">${dayName.split(',')[0]}</h3><p class="text-xs sm:text-sm text-gray-500">${dayData.title}</p>`;
                 card.onclick = () => selectDay(dayName);
                 daysGrid.appendChild(card);
@@ -686,7 +749,7 @@
 
         function selectDay(dayName) {
             currentDay = dayName;
-            displayDayCards(); // Re-render to highlight active day
+            displayDayCards();
             displayWorkoutDetail(dayName);
         }
 
@@ -716,10 +779,15 @@
             if (dayData.mainWorkout && dayData.mainWorkout.length > 0) {
                 html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Main Workout:</h4>';
                 html += '<ul class="space-y-3">';
-                dayData.mainWorkout.forEach(ex => {
-                    html += `<li class="p-3 bg-gray-50 rounded-md">
+                dayData.mainWorkout.forEach((ex, index) => {
+                    const exerciseId = `${currentWeek}-${dayName.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
+                    const storedWeight = localStorage.getItem(`weight-${exerciseId}`) || '';
+                    html += `<li class="p-3 bg-gray-50 rounded-md flex items-center flex-wrap">
                                 <strong class="text-gray-800">${ex.name}</strong>: ${ex.setsReps}
-                                ${ex.notes ? `<p class="text-sm text-gray-600 italic mt-1">${ex.notes}</p>` : ''}
+                                <button class="llm-button" onclick="explainExercise('${ex.name}', 'llm-response-${exerciseId}')">Explain ✨</button>
+                                <input type="text" id="weight-input-${exerciseId}" class="weight-input" placeholder="Weight (e.g., 10kg)" value="${storedWeight}" oninput="updateWeight('${exerciseId}')">
+                                ${ex.notes ? `<p class="text-sm text-gray-600 italic mt-1 w-full">${ex.notes}</p>` : ''}
+                                <div id="llm-response-${exerciseId}" class="llm-response hidden w-full mt-2"></div>
                              </li>`;
                 });
                 html += '</ul>';
@@ -729,9 +797,173 @@
                 html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Cool-down:</h4>';
                 html += formatList(dayData.coolDown);
             }
+
+            const isCompleted = localStorage.getItem(`${currentWeek}-${dayName}-completed`) === 'true';
+            html += `<div class="mt-6 text-center">
+                        <button id="complete-workout-btn" class="complete-button ${isCompleted ? 'completed' : ''}" onclick="toggleWorkoutCompletion()">
+                            ${isCompleted ? 'Workout Completed!' : 'Mark as Complete'}
+                        </button>
+                        <button class="llm-button mt-4 w-full" onclick="getDailyPepTalk('daily-pep-talk-response')">Get Daily Pep Talk ✨</button>
+                        <div id="daily-pep-talk-response" class="llm-response hidden w-full mt-2"></div>
+                    </div>`;
             
             workoutDetailContainer.innerHTML = html;
             workoutDetailContainer.classList.remove('hidden');
+        }
+
+        async function callGeminiAPI(prompt, outputElementId) {
+            const outputElement = document.getElementById(outputElementId);
+            if (!outputElement) return;
+
+            outputElement.innerHTML = '<span class="llm-loading">Loading...</span>';
+            outputElement.classList.remove('hidden');
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Leave as-is, Canvas provides at runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputElement.innerHTML = text;
+                } else {
+                    outputElement.innerHTML = 'Sorry, could not generate a response.';
+                    console.error('Gemini API response structure unexpected:', result);
+                }
+            } catch (error) {
+                outputElement.innerHTML = 'Error: Could not connect to the API.';
+                console.error('Error calling Gemini API:', error);
+            }
+        }
+
+        function explainExercise(exerciseName, outputElementId) {
+            const prompt = `Provide a brief explanation and 3-4 key form tips for the "${exerciseName}" exercise, suitable for a beginner in a workout app. Keep it concise.`;
+            callGeminiAPI(prompt, outputElementId);
+        }
+
+        function getDailyPepTalk(outputElementId) {
+            const currentWorkoutTitle = workoutData[currentWeek].days[currentDay].title;
+            const prompt = `Give a short, encouraging and motivating pep talk for today's workout, which is "${currentWorkoutTitle}". Focus on consistency and pushing through. Keep it under 50 words.`;
+            callGeminiAPI(prompt, outputElementId);
+        }
+
+        // --- GOOGLE APPS SCRIPT INTEGRATION ---
+        async function sendWorkoutDataToSheets(data) {
+            // !!! IMPORTANT: REPLACE THIS URL WITH YOUR ACTUAL DEPLOYED APPS SCRIPT WEB APP URL !!!
+            const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxa-vZQCoQeuBg5bmKV7LXgYdeDlaZI7drdC1wLfdU0D0uGByExHvOLj1eE5gsCb5uu/exec'; // e.g., 'https://script.google.com/macros/s/AKfycb.../exec'
+
+            try {
+                const response = await fetch(appsScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Essential for client-side JavaScript to Apps Script without CORS issues
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                // In 'no-cors' mode, 'response' will be opaque.
+                // You won't be able to read response.json() or check response.ok directly.
+                // However, the request will still be sent.
+                console.log('Data sent to Google Sheets. Check your sheet to confirm!');
+
+            } catch (error) {
+                console.error('Error sending data to Google Sheets:', error);
+                // alert('Failed to save data online. Please check your internet connection or the Apps Script URL.');
+                // Using alert() is discouraged in Canvas, so commenting out.
+            }
+        }
+
+        // Helper function to consolidate all day's data and send to sheets
+        function saveAllDayDataToSheets() {
+            if (!currentWeek || !currentDay) return;
+
+            const dayData = workoutData[currentWeek].days[currentDay];
+            if (!dayData) return;
+
+            const isCompleted = localStorage.getItem(`${currentWeek}-${currentDay}-completed`) === 'true';
+
+            const exercisesToSend = [];
+            // Collect main workout exercises for sending
+            if (dayData.mainWorkout) {
+                dayData.mainWorkout.forEach((ex, index) => {
+                    // Create a unique ID for each exercise to retrieve its stored weight
+                    // The exerciseId used for localStorage.setItem should match this pattern
+                    const exerciseIdForLocalStorage = `${currentWeek}-${currentDay.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
+                    const storedWeight = localStorage.getItem(`weight-${exerciseIdForLocalStorage}`) || '';
+
+                    exercisesToSend.push({
+                        name: ex.name,
+                        setsReps: ex.setsReps,
+                        notes: ex.notes,
+                        weight: storedWeight // The user-entered weight
+                    });
+                });
+            }
+
+            const dataToSend = {
+                week: currentWeek,
+                day: currentDay, // e.g., "Monday, May 26, 2025"
+                workoutTitle: dayData.title,
+                weeklyFocus: workoutData[currentWeek].focus,
+                completed: isCompleted,
+                exercises: exercisesToSend // Array of exercise objects with their weights
+            };
+
+            sendWorkoutDataToSheets(dataToSend);
+        }
+
+        // --- END GOOGLE APPS SCRIPT INTEGRATION ---
+
+
+        function updateWeight(exerciseId) {
+            const inputElement = document.getElementById(`weight-input-${exerciseId}`);
+            if (inputElement) {
+                localStorage.setItem(`weight-${exerciseId}`, inputElement.value);
+                // Trigger sending all day's data to sheets after a weight is updated
+                saveAllDayDataToSheets();
+            }
+        }
+
+        function toggleWorkoutCompletion() {
+            if (!currentWeek || !currentDay) return;
+
+            const completionKey = `${currentWeek}-${currentDay}-completed`;
+            const isCompleted = localStorage.getItem(completionKey) === 'true';
+            localStorage.setItem(completionKey, !isCompleted);
+
+            const dayCardId = `card-${currentWeek}-${currentDay.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            const dayCard = document.getElementById(dayCardId);
+            if (dayCard) {
+                if (!isCompleted) {
+                    dayCard.classList.add('completed-day');
+                } else {
+                    dayCard.classList.remove('completed-day');
+                }
+            }
+
+            const completeButton = document.getElementById('complete-workout-btn');
+            if (completeButton) {
+                if (!isCompleted) {
+                    completeButton.textContent = 'Workout Completed!';
+                    completeButton.classList.add('completed');
+                } else {
+                    completeButton.textContent = 'Mark as Complete';
+                    completeButton.classList.remove('completed');
+                }
+            }
+            // Trigger sending all day's data to sheets after completion status is toggled
+            saveAllDayDataToSheets();
         }
 
         // Chart.js Initialization
@@ -743,7 +975,7 @@
                     labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
                     datasets: [{
                         label: 'Conceptual Intensity Level',
-                        data: [60, 70, 80, 90, 95], // Example data
+                        data: [60, 70, 80, 90, 95],
                         borderColor: '#007BFF',
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         fill: true,
@@ -764,7 +996,7 @@
                     labels: ['Upper Body', 'Lower Body', 'Full Body', 'Active Recovery', 'Rest'],
                     datasets: [{
                         label: 'Workout Distribution',
-                        data: [2, 1, 1, 1, 2], // Example: Mon, Wed (Upper), Tue (Lower), Fri (Full), Thu (Active), Sat(Functional/Light), Sun(Rest)
+                        data: [2, 1, 1, 1, 2],
                         backgroundColor: ['#007BFF', '#28A745', '#FFC107', '#17A2B8', '#6C757D'],
                     }]
                 },
@@ -791,11 +1023,9 @@
             });
         }
 
-
-        // Initial setup
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('overview'); // Show overview by default
-            selectWeek("Week 1"); // Load Week 1 by default in the weekly plan section
+            showSection('overview');
+            selectWeek("Week 1");
             initCharts();
         });
 
