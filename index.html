@@ -258,8 +258,8 @@
     </footer>
 
     <script>
-        const workoutData = {
-            "Week 1": {
+const workoutData = {
+  "Week 1": {
                 focus: "Foundation & Form Mastery. Aim for 2-3 Reps in Reserve (RIR) on most sets.",
                 days: {
                     "Monday, May 26, 2025": {
@@ -344,325 +344,472 @@
                     }
                 }
             },
-            "Week 2": {
-                focus: "Increasing Reps & Slightly Heavier. Aim for 1-2 RIR.",
-                days: {
-                    "Monday, June 2, 2025": {
-                        title: "Upper Body Power",
-                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-10 reps", notes: "Try to get 10 reps. If you hit 10 easily, consider a 1-2.5kg increase per dumbbell next week." },
-                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-10 reps", notes: "" },
-                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "If 6 reps were easy last week, aim for 7-8 reps this week." },
-                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
-                    },
-                     "Tuesday, June 3, 2025": {
-                        title: "Lower Body Foundation",
-                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Push for more reps (7-8). If 6 reps felt very light last week, consider a 2.5-5kg weight increase." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "" },
-                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "" },
-                            { name: "Seated Calf Raise", setsReps: "4 sets × 13-15 reps", notes: "" },
-                            { name: "Decline Crunches", setsReps: "4 sets × 13-15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
-                    },
-                    "Wednesday, June 4, 2025": {
-                        title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Bench Press", setsReps: "3 sets × 5-6 reps", notes: "If 4 reps were easy last week, aim for 5 or 6 reps this week. If you hit 6 easily, consider a 2.5-5kg increase next week." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 9-12 reps", notes: "" },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 9-12 reps", notes: "" },
-                            { name: "Cable Lateral Raise", setsReps: "3 sets × 11-12 reps", notes: "" },
-                            { name: "Face Pulls", setsReps: "3 sets × 11-12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: chest, back, shoulders."]
-                    },
-                    "Thursday, June 5, 2025": {
-                        title: "Active Recovery/Cardio",
-                        warmUp: ["Light cardio: 5 min"],
-                        mainWorkout: [
-                            { name: "Steady-State Cardio", setsReps: "25–35 min", notes: "Increase duration by 5 minutes or slightly increase intensity (faster pace, higher incline)." },
-                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
-                            { name: "Core Circuit: Plank", setsReps: "3 sets × 45–60 sec", notes: "" },
-                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15 reps per side", notes: "" },
-                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: full body."]
-                    },
-                    "Friday, June 6, 2025": {
-                        title: "Full Body Power",
-                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "" },
-                            { name: "Dumbbell Row", setsReps: "3 sets × 9-12 reps", notes: "" },
-                            { name: "Hip Thrusts", setsReps: "3 sets × 12-15 reps", notes: "" },
-                            { name: "Seated Cable Fly", setsReps: "3 sets × 12-15 reps", notes: "" },
-                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 16-20 reps", notes: "" },
-                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 13-15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: legs, back, chest."]
-                    },
-                    "Saturday, June 7, 2025": {
-                        title: "Functional Movement",
-                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
-                        mainWorkout: [
-                            { name: "Glute Bridge", setsReps: "2 sets × 10–15 reps", notes: "" },
-                            { name: "Chair Squats", setsReps: "2 sets × 10–15 reps", notes: "" },
-                            { name: "Stationary Lunges", setsReps: "2 sets × 10–15 reps per leg", notes: "" },
-                            { name: "Plank to Downward Dog", setsReps: "2 sets × 10–15 reps (or 30–45 sec hold)", notes: "" },
-                            { name: "Optional:", setsReps: "Add an extra set to 1-2 exercises if time and energy permit (e.g., Glute Bridge 3 sets instead of 2).", notes: "" }
-                        ],
-                        coolDown: ["Stretching: hips, legs, back."]
-                    },
-                    "Sunday, June 8, 2025": {
-                        title: "Complete Rest",
-                        warmUp: [],
-                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
-                        coolDown: []
-                    }
-                }
-            },
-            "Week 3": {
-                focus: "Increased Weight & Pushing Reps. Aim for 1 RIR on compound lifts, 1-2 RIR on accessory.",
-                 days: {
-                    "Monday, June 9, 2025": {
-                        title: "Upper Body Power",
-                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight if you hit 10-12 reps easily last week. Aim for 8 reps with the new, heavier weight." },
-                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Increase weight. Aim for 6 reps with the new, heavier weight." },
-                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." },
-                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "Increase weight if 12 reps were easy." },
-                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." }
-                        ],
-                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
-                    },
-                     "Tuesday, June 10, 2025": {
-                        title: "Lower Body Foundation",
-                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Significant weight increase from last week, aiming for 6 reps with this new weight." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Increase weight." },
-                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "Consider holding slightly heavier dumbbells if previous sets were easy." },
-                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "Increase weight." },
-                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "Increase difficulty by holding a light weight or performing slower." }
-                        ],
-                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
-                    },
-                    "Wednesday, June 11, 2025": {
-                        title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Increase weight, even if it means hitting 4 reps with the new load." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "Increase weight, focus on controlled form." },
-                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "Increase weight." }
-                        ],
-                        coolDown: ["Stretching: chest, back, shoulders."]
-                    },
-                    "Thursday, June 12, 2025": {
-                        title: "Active Recovery/Cardio",
-                        warmUp: ["Light cardio: 5 min"],
-                        mainWorkout: [
-                            { name: "Steady-State Cardio", setsReps: "Maintain increased duration or slightly higher intensity.", notes: "" },
-                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
-                            { name: "Core Circuit: Plank", setsReps: "3 sets × 60–75 sec", notes: "Aim for slightly longer holds." },
-                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15+ reps per side", notes: "More reps or slower tempo." },
-                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15+ reps", notes: "More reps or slower tempo." }
-                        ],
-                        coolDown: ["Stretching: full body."]
-                    },
-                    "Friday, June 13, 2025": {
-                        title: "Full Body Power",
-                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "Increase weight." },
-                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "Increase weight on the bar." },
-                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "Increase weight." },
-                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "Increase weight." },
-                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "Increase weight." }
-                        ],
-                        coolDown: ["Stretching: legs, back, chest."]
-                    },
-                    "Saturday, June 14, 2025": {
-                        title: "Functional Movement",
-                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
-                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
-                        coolDown: ["Stretching: hips, legs, back."]
-                    },
-                    "Sunday, June 15, 2025": {
-                        title: "Complete Rest",
-                        warmUp: [],
-                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
-                        coolDown: []
-                    }
-                }
-            },
-            "Week 4": {
-                focus: "Pushing Limits & Minor Adjustments. Aim for 0-1 RIR on compound lifts, 1 RIR on accessory.",
-                days: {
-                    "Monday, June 16, 2025": {
-                        title: "Upper Body Power",
-                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Push for the higher rep count or another weight jump." },
-                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "" },
-                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Push hard on the final set." },
-                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
-                    },
-                    "Tuesday, June 17, 2025": {
-                        title: "Lower Body Foundation",
-                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Aim for a weight increase or hitting 8 reps with your current challenging weight." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Keep a slight bend in your knees." },
-                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "" },
-                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "" },
-                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
-                    },
-                    "Wednesday, June 18, 2025": {
-                        title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Push for a small weight increase or hitting 6 reps with your current challenging weight." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Increase weight." },
-                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: chest, back, shoulders."]
-                    },
-                    "Thursday, June 19, 2025": {
-                        title: "Active Recovery/Cardio",
-                        warmUp: ["Light cardio: 5 min"],
-                        mainWorkout: [
-                            { name: "Steady-State Cardio", setsReps: "Potentially increase intensity further or try to maintain the higher duration at a faster pace.", notes: "" },
-                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
-                            { name: "Core Circuit", setsReps: "Try to complete the circuit with minimal rest between exercises.", notes: "Plank: 3 sets x 60-75s, Bicycle Crunches: 3 sets x 15+ reps/side, Leg Raises: 3 sets x 12-15+ reps" }
-                        ],
-                        coolDown: ["Stretching: full body."]
-                    },
-                    "Friday, June 20, 2025": {
-                        title: "Full Body Power",
-                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "" },
-                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "" },
-                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "" },
-                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "" },
-                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "" },
-                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: legs, back, chest."]
-                    },
-                     "Saturday, June 21, 2025": {
-                        title: "Functional Movement",
-                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
-                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
-                        coolDown: ["Stretching: hips, legs, back."]
-                    },
-                    "Sunday, June 22, 2025": {
-                        title: "Complete Rest",
-                        warmUp: [],
-                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Focus on recovery." }],
-                        coolDown: []
-                    }
-                }
-            },
-            "Week 5": {
-                focus: "Peak Performance & Max Effort. Aim for 0 RIR on the last set of compound lifts. Consider advanced techniques if form is perfect.",
-                days: {
-                    "Monday, June 23, 2025": {
-                        title: "Upper Body Power",
-                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8-12 reps", notes: "Push for a weight PB or higher reps; consider Rest-Pause on the final set (rest 10-15s, then do 2-3 more reps)." },
-                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8-12 reps", notes: "Aim for highest weight/reps." },
-                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6-8 reps", notes: "Push for a weight PB; consider Rest-Pause on the final set." },
-                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10-12 reps", notes: "Consider a Dropset on the final set (reduce weight by 20-30%, then max reps)." },
-                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10-12 reps", notes: "Consider a Dropset on the final set." }
-                        ],
-                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
-                    },
-                    "Tuesday, June 24, 2025": {
-                        title: "Lower Body Foundation",
-                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Back Squat", setsReps: "4 sets × 6-8 reps", notes: "Aim for a weight PB or hitting 8 reps with challenging weight; consider Rest-Pause on the final set." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6-8 reps", notes: "Aim for weight PB." },
-                            { name: "Walking Lunges", setsReps: "3 sets × 8-10 reps per leg", notes: "Aim for heavier dumbbells." },
-                            { name: "Seated Calf Raise", setsReps: "4 sets × 12-15 reps", notes: "Max weight/reps." },
-                            { name: "Decline Crunches", setsReps: "4 sets × 12-15 reps", notes: "Max reps/difficulty." }
-                        ],
-                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
-                    },
-                    "Wednesday, June 25, 2025": {
-                        title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Barbell Bench Press", setsReps: "3 sets × 4-6 reps", notes: "Aim for a weight PB or hitting 6 reps; consider Rest-Pause on the final set." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 8-12 reps", notes: "Aim for max weight/reps." },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8-12 reps", notes: "Aim for max weight/reps." },
-                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10-12 reps", notes: "" },
-                            { name: "Face Pulls", setsReps: "3 sets × 10-12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: chest, back, shoulders."]
-                    },
-                    "Thursday, June 26, 2025": {
-                        title: "Active Recovery/Cardio",
-                        warmUp: ["Light cardio: 5 min"],
-                        mainWorkout: [
-                            { name: "Steady-State Cardio", setsReps: "Go for a strong, consistent effort.", notes: "" },
-                            { name: "Mobility Drills", setsReps: "10 min", notes: "" },
-                            { name: "Core Circuit", setsReps: "Maintain consistency.", notes: "Plank: 3 sets x 60-75s, Bicycle Crunches: 3 sets x 15+ reps/side, Leg Raises: 3 sets x 12-15+ reps" }
-                        ],
-                        coolDown: ["Stretching: full body."]
-                    },
-                    "Friday, June 27, 2025": {
-                        title: "Full Body Power",
-                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Squats", setsReps: "3 sets × 6-8 reps", notes: "Push for max weight/reps." },
-                            { name: "Dumbbell Row", setsReps: "3 sets × 8-12 reps", notes: "" },
-                            { name: "Hip Thrusts", setsReps: "3 sets × 10-15 reps", notes: "Aim for max weight/reps." },
-                            { name: "Seated Cable Fly", setsReps: "3 sets × 10-15 reps", notes: "" },
-                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15-20 reps", notes: "" },
-                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12-15 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: legs, back, chest."]
-                    },
-                    "Saturday, June 28, 2025": {
-                        title: "Functional Movement",
-                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
-                        mainWorkout: [ { name: "As Week 1", setsReps: "", notes: "" } ],
-                        coolDown: ["Stretching: hips, legs, back."]
-                    },
-                    "Sunday, June 29, 2025": {
-                        title: "Complete Rest",
-                        warmUp: [],
-                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Enjoy the results of your hard work!" }],
-                        coolDown: []
-                    }
-                }
-            }
-        };
+  "Week 2": {
+    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
+    days: {
+      "Monday, June 2, 2025": {
+        title: "Upper Body",
+        warmUp: [
+          "Light cardio (rowing, cycling) 5 min",
+          "Dynamic stretches (arm circles, band pull-aparts)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
+          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
+          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
+          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
+          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
+          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
+        ],
+        coolDown: [
+          "Stretch upper body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Tuesday, June 3, 2025": {
+        title: "Lower Body",
+        warmUp: [
+          "Light cardio (cycling, treadmill) 5 min",
+          "Dynamic stretches (leg swings, hip openers)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
+          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
+          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
+          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
+          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
+        ],
+        coolDown: [
+          "Stretch lower body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Wednesday, June 4, 2025": {
+        title: "Rest / Active Recovery",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
+          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
+          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
+        ],
+        coolDown: []
+      },
+      "Thursday, June 5, 2025": {
+        title: "Push (Chest, Shoulders, Triceps)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic upper body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
+          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
+          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
+          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
+          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
+        ],
+        coolDown: [
+          "Stretch chest, shoulders, triceps; foam rolling"
+        ]
+      },
+      "Friday, June 6, 2025": {
+        title: "Pull (Back, Biceps, Rear Delts)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic stretches (band pull-aparts, arm swings)",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
+          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
+          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
+          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
+          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
+        ],
+        coolDown: [
+          "Stretch back, biceps, rear delts"
+        ]
+      },
+      "Saturday, June 7, 2025": {
+        title: "Legs (Glutes, Hamstrings, Calves)",
+        warmUp: [
+          "Light cardio (treadmill, cycling) 5 min",
+          "Dynamic lower body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
+          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
+          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
+          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
+          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
+        ],
+        coolDown: [
+          "Stretch glutes, hamstrings, calves"
+        ]
+      },
+      "Sunday, June 8, 2025": {
+        title: "Rest / Mobility",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
+          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
+          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
+        ],
+        coolDown: []
+      }
+    }
+  },
+  "Week 3": {
+    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
+    days: {
+      "Monday, June 9, 2025": {
+        title: "Upper Body",
+        warmUp: [
+          "Light cardio (rowing, cycling) 5 min",
+          "Dynamic stretches (arm circles, band pull-aparts)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
+          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
+          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
+          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
+          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
+          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
+        ],
+        coolDown: [
+          "Stretch upper body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Tuesday, June 10, 2025": {
+        title: "Lower Body",
+        warmUp: [
+          "Light cardio (cycling, treadmill) 5 min",
+          "Dynamic stretches (leg swings, hip openers)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
+          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
+          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
+          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
+          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
+        ],
+        coolDown: [
+          "Stretch lower body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Wednesday, June 11, 2025": {
+        title: "Rest / Active Recovery",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
+          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
+          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
+        ],
+        coolDown: []
+      },
+      "Thursday, June 12, 2025": {
+        title: "Push (Chest, Shoulders, Triceps)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic upper body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
+          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
+          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
+          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
+          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
+        ],
+        coolDown: [
+          "Stretch chest, shoulders, triceps; foam rolling"
+        ]
+      },
+      "Friday, June 13, 2025": {
+        title: "Pull (Back, Biceps, Rear Delts)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic stretches (band pull-aparts, arm swings)",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
+          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
+          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
+          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
+          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
+        ],
+        coolDown: [
+          "Stretch back, biceps, rear delts"
+        ]
+      },
+      "Saturday, June 14, 2025": {
+        title: "Legs (Glutes, Hamstrings, Calves)",
+        warmUp: [
+          "Light cardio (treadmill, cycling) 5 min",
+          "Dynamic lower body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
+          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
+          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
+          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
+          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
+        ],
+        coolDown: [
+          "Stretch glutes, hamstrings, calves"
+        ]
+      },
+      "Sunday, June 15, 2025": {
+        title: "Rest / Mobility",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
+          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
+          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
+        ],
+        coolDown: []
+      }
+    }
+  },
+  "Week 4": {
+    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
+    days: {
+      "Monday, June 16, 2025": {
+        title: "Upper Body",
+        warmUp: [
+          "Light cardio (rowing, cycling) 5 min",
+          "Dynamic stretches (arm circles, band pull-aparts)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
+          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
+          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
+          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
+          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
+          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
+        ],
+        coolDown: [
+          "Stretch upper body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Tuesday, June 17, 2025": {
+        title: "Lower Body",
+        warmUp: [
+          "Light cardio (cycling, treadmill) 5 min",
+          "Dynamic stretches (leg swings, hip openers)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
+          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
+          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
+          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
+          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
+        ],
+        coolDown: [
+          "Stretch lower body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Wednesday, June 18, 2025": {
+        title: "Rest / Active Recovery",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
+          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
+          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
+        ],
+        coolDown: []
+      },
+      "Thursday, June 19, 2025": {
+        title: "Push (Chest, Shoulders, Triceps)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic upper body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
+          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
+          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
+          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
+          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
+        ],
+        coolDown: [
+          "Stretch chest, shoulders, triceps; foam rolling"
+        ]
+      },
+      "Friday, June 20, 2025": {
+        title: "Pull (Back, Biceps, Rear Delts)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic stretches (band pull-aparts, arm swings)",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
+          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
+          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
+          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
+          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
+        ],
+        coolDown: [
+          "Stretch back, biceps, rear delts"
+        ]
+      },
+      "Saturday, June 21, 2025": {
+        title: "Legs (Glutes, Hamstrings, Calves)",
+        warmUp: [
+          "Light cardio (treadmill, cycling) 5 min",
+          "Dynamic lower body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
+          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
+          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
+          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
+          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
+        ],
+        coolDown: [
+          "Stretch glutes, hamstrings, calves"
+        ]
+      },
+      "Sunday, June 22, 2025": {
+        title: "Rest / Mobility",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
+          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
+          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
+        ],
+        coolDown: []
+      }
+    }
+  },
+  "Week 5": {
+    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
+    days: {
+      "Monday, June 23, 2025": {
+        title: "Upper Body",
+        warmUp: [
+          "Light cardio (rowing, cycling) 5 min",
+          "Dynamic stretches (arm circles, band pull-aparts)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
+          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
+          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
+          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
+          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
+          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
+        ],
+        coolDown: [
+          "Stretch upper body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Tuesday, June 24, 2025": {
+        title: "Lower Body",
+        warmUp: [
+          "Light cardio (cycling, treadmill) 5 min",
+          "Dynamic stretches (leg swings, hip openers)",
+          "1–2 warm-up sets with lighter weights"
+        ],
+        mainWorkout: [
+          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
+          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
+          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
+          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
+          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
+        ],
+        coolDown: [
+          "Stretch lower body muscles, foam rolling, deep breathing"
+        ]
+      },
+      "Wednesday, June 25, 2025": {
+        title: "Rest / Active Recovery",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
+          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
+          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
+        ],
+        coolDown: []
+      },
+      "Thursday, June 26, 2025": {
+        title: "Push (Chest, Shoulders, Triceps)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic upper body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
+          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
+          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
+          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
+          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
+        ],
+        coolDown: [
+          "Stretch chest, shoulders, triceps; foam rolling"
+        ]
+      },
+      "Friday, June 27, 2025": {
+        title: "Pull (Back, Biceps, Rear Delts)",
+        warmUp: [
+          "Light cardio 5 min",
+          "Dynamic stretches (band pull-aparts, arm swings)",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
+          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
+          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
+          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
+          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
+        ],
+        coolDown: [
+          "Stretch back, biceps, rear delts"
+        ]
+      },
+      "Saturday, June 28, 2025": {
+        title: "Legs (Glutes, Hamstrings, Calves)",
+        warmUp: [
+          "Light cardio (treadmill, cycling) 5 min",
+          "Dynamic lower body stretches",
+          "1–2 warm-up sets"
+        ],
+        mainWorkout: [
+          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
+          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
+          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
+          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
+          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
+        ],
+        coolDown: [
+          "Stretch glutes, hamstrings, calves"
+        ]
+      },
+      "Sunday, June 29, 2025": {
+        title: "Rest / Mobility",
+        warmUp: [],
+        mainWorkout: [
+          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
+          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
+          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
+        ],
+        coolDown: []
+      }
+    }
+  }
+};
+
 
         let currentWeek = "Week 1";
         let currentDay = null;
