@@ -892,7 +892,6 @@
             if (!dayData) return;
 
             const isCompleted = localStorage.getItem(`${currentWeek}-${currentDay}-completed`) === 'true';
-
             const exercisesToSend = [];
             // Collect main workout exercises for sending
             if (dayData.mainWorkout) {
@@ -919,10 +918,9 @@
                 completed: isCompleted,
                 exercises: exercisesToSend // Array of exercise objects with their weights
             };
-
-            sendWorkoutDataToSheets(dataToSend);
+            if(isCompleted){  sendWorkoutDataToSheets(dataToSend);}
         }
-
+    
         // --- END GOOGLE APPS SCRIPT INTEGRATION ---
 
 
