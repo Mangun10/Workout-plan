@@ -3,1177 +3,745 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5-Week Interactive Workout Plan</title>
+    <title>My 5-Day Workout & 5K Tracker</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Visualization & Content Choices:
-        - Report Info: Weekly workout schedule. Goal: Navigate daily workouts. Viz/Method: HTML lists for exercises, sets, reps. Interaction: Click week tabs, then day cards to display details. Justification: Direct and clear presentation of core information. Library: Vanilla JS for content switching.
-        - Report Info: Progression principles. Goal: Inform user on how to progress. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Easy access to crucial guidance. Library: Vanilla JS for navigation.
-        - Report Info: Equipment list. Goal: Inform user of needs. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Essential setup information. Library: Vanilla JS for navigation.
-        - Report Info: Important Reminders. Goal: Provide holistic advice. Viz/Method: Formatted text block in dedicated section. Interaction: Navigation to section. Justification: Key advice for success. Library: Vanilla JS for navigation.
-        - Report Info: Overall 5-week progression concept. Goal: Visualize planned intensity increase. Viz/Method: Line Chart (Chart.js) in Overview. Interaction: Static display. Justification: Provides a high-level overview of the plan's intensity arc. Library: Chart.js.
-        - Report Info: Distribution of workout types in a week. Goal: Show weekly balance. Viz/Method: Pie Chart (Chart.js) in Overview. Interaction: Static display. Justification: Illustrates the plan's structure. Library: Chart.js.
-        - New Feature: Workout Completion. Goal: Allow users to mark days as complete. Viz/Method: Button on daily workout detail. Interaction: Click button turns day card green. Justification: Provides visual feedback and motivation. Library: Vanilla JS, local storage.
-        - New Feature: Weight Tracking. Goal: Allow users to record weights used per exercise. Viz/Method: Text input next to each exercise. Interaction: User types weight, it's displayed. Justification: Enables personal tracking for progressive overload. Library: Vanilla JS, local storage.
-        - New Feature: ✨ Exercise Explainer. Goal: Provide quick form tips/explanation for exercises. Viz/Method: Button next to exercise, displays text. Interaction: Click button. Justification: Enhances understanding and proper execution. Library: Gemini API (LLM).
-        - New Feature: ✨ Daily Pep Talk. Goal: Provide motivational message. Viz/Method: Button, displays text. Interaction: Click button. Justification: Boosts user morale and consistency. Library: Gemini API (LLM).
-        - CONFIRMING NO SVG/Mermaid, supporting the DESIGNED structure. -->
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #343A40; }
-        .nav-link { transition: all 0.3s ease; }
-        .nav-link.active { color: #007BFF; border-bottom-color: #007BFF; font-weight: 600; }
-        .week-tab.active { background-color: #007BFF; color: white; }
-        .day-card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
-        .day-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .day-card.active { border-color: #007BFF; background-color: #E7F3FF; }
-        .day-card.completed-day { background-color: #D4EDDA; border-color: #28A745; }
-        .content-section { background-color: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 350px; }
-        @media (min-width: 768px) { .chart-container { height: 350px; } }
-        /* Tailwind Customizations */
-        .bg-primary-light { background-color: #E7F3FF; }
-        .text-primary { color: #007BFF; }
-        .border-primary { border-color: #007BFF; }
-        .hover-bg-primary-dark:hover { background-color: #0056b3; }
-        .complete-button {
-            background-color: #28A745;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        .complete-button:hover {
-            background-color: #218838;
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .complete-button.completed {
-            background-color: #6C757D;
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
-        .complete-button.completed:hover {
-            background-color: #5A6268;
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
         }
-        .weight-input {
-            width: 80px;
-            padding: 4px 8px;
-            border: 1px solid #CCC;
-            border-radius: 4px;
-            margin-left: 8px;
-            font-size: 0.875rem;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
-        .weight-display {
-            font-weight: 500;
-            color: #007BFF;
-            margin-left: 5px;
+        .dark ::-webkit-scrollbar-track {
+            background: #333;
         }
-        .llm-button {
-            background-color: #6A0DAD; /* Purple */
-            color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            margin-left: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #555;
         }
-        .llm-button:hover {
-            background-color: #4B0082; /* Darker Purple */
-        }
-        .llm-response {
-            background-color: #f0f0f0;
-            border-left: 4px solid #6A0DAD;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            color: #333;
-        }
-        .llm-loading {
-            color: #6A0DAD;
-            font-style: italic;
-            margin-top: 10px;
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #777;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-950 text-gray-900 dark:text-gray-100 p-4 sm:p-6 lg:p-8">
 
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <span class="font-bold text-xl text-primary">Workout Plan</span>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#" onclick="showSection('overview')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary active">Overview</a>
-                        <a href="#" onclick="showSection('weeklyPlan')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Weekly Plan</a>
-                        <a href="#" onclick="showSection('progressionPrinciples')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Progression</a>
-                        <a href="#" onclick="showSection('requiredEquipment')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Equipment</a>
-                        <a href="#" onclick="showSection('importantReminders')" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary">Reminders</a>
-                    </div>
-                </div>
-                <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" type="button" class="bg-gray-200 inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary" aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </nav>
-        <div class="md:hidden hidden" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" onclick="showSection('overview'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 active">Overview</a>
-                <a href="#" onclick="showSection('weeklyPlan'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Weekly Plan</a>
-                <a href="#" onclick="showSection('progressionPrinciples'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Progression</a>
-                <a href="#" onclick="showSection('requiredEquipment'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Equipment</a>
-                <a href="#" onclick="showSection('importantReminders'); toggleMobileMenu();" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">Reminders</a>
-            </div>
+    <!-- Modal Message Container -->
+    <div id="modal-message-container" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <p id="modal-message-text" class="text-lg mb-4"></p>
+            <button id="modal-message-ok-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                OK
+            </button>
         </div>
+    </div>
+
+    <header class="text-center mb-8">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-700 dark:text-blue-400 mb-2">
+            My 5-Day Workout & 5K Tracker
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300">
+            Stay consistent, build muscle, and improve your 5K!
+        </p>
+        <p id="user-id-display" class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            User ID: Loading...
+        </p>
     </header>
 
-    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <section id="overview" class="main-content-section">
-            <div class="content-section p-6 mb-8">
-                <h1 class="text-3xl font-bold mb-4 text-primary">Welcome to Your 5-Week Workout Plan!</h1>
-                <p class="text-gray-700 mb-4">This interactive application provides a detailed day-by-day guide for your 5-week fitness journey. The plan is designed for maximum efficiency and results, fitting into an office gym schedule. Navigate through the sections to find your daily workouts, progression principles, equipment needs, and important reminders to help you succeed.</p>
-                <p class="text-gray-700">Remember to prioritize **form over weight** and always **listen to your body**. Consistency is key to achieving your fitness goals. Let's get started!</p>
+    <!-- Daily Workout Section -->
+    <section id="daily-workout-section" class="mb-10 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <svg class="w-7 h-7 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            Today's Workout: <span id="today-date-display"></span>
+        </h2>
+        <div id="daily-workout-content">
+            <!-- Content will be loaded by JavaScript -->
+            <p class="text-gray-700 dark:text-gray-300">Loading today's workout...</p>
+        </div>
+    </section>
+
+    <!-- Active Workout Session -->
+    <section id="active-workout-section" class="mb-10 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hidden">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <svg class="w-7 h-7 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M3 19l6 3V6m0 0l-6 3m6 0l-12 3"></path></svg>
+            Workout In Progress
+        </h2>
+        <div id="active-workout-content" class="text-center">
+            <p id="exercise-progress" class="text-lg text-gray-600 dark:text-gray-300 mb-2"></p>
+            <h3 id="current-exercise-name" class="text-3xl font-bold text-blue-700 dark:text-blue-400 mb-4"></h3>
+            <p id="current-exercise-details" class="text-gray-700 dark:text-gray-300 mb-4"></p>
+            <img id="current-exercise-image" src="" alt="Exercise Image" class="mx-auto rounded-lg shadow-md mb-6 w-full max-w-md h-auto object-cover" onerror="this.onerror=null; this.src='https://placehold.co/300x200/CCCCCC/000000?text=Image+Not+Found';">
+
+            <div class="mb-4">
+                <label for="weightInput" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+                    Weight Used (kg/lbs):
+                </label>
+                <input
+                    type="number"
+                    id="weightInput"
+                    class="shadow appearance-none border rounded-full w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 max-w-xs mx-auto"
+                    placeholder="e.g., 20"
+                />
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="content-section p-6">
-                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">Conceptual Weekly Intensity</h2>
-                    <p class="text-sm text-gray-600 mb-4">This chart illustrates the planned increase in workout intensity or challenge over the 5 weeks. Actual progression will depend on your individual efforts and adherence to the plan.</p>
-                    <div class="chart-container">
-                        <canvas id="intensityChart"></canvas>
-                    </div>
-                </div>
-                <div class="content-section p-6">
-                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">Typical Weekly Workout Distribution</h2>
-                    <p class="text-sm text-gray-600 mb-4">This chart shows how workout days are generally distributed by type within a week in this plan.</p>
-                    <div class="chart-container">
-                        <canvas id="workoutDistributionChart"></canvas>
-                    </div>
-                </div>
+            <div id="rest-timer-display" class="text-xl font-semibold text-red-500 mb-4 hidden">
+                Rest Timer: <span id="timer-seconds">0</span> seconds
             </div>
-        </section>
 
-        <section id="weeklyPlan" class="main-content-section hidden">
-            <div class="content-section p-6 mb-8">
-                 <h1 class="text-3xl font-bold mb-4 text-primary">Weekly Workout Schedule</h1>
-                 <p class="text-gray-700 mb-6">Select a week below to view the daily workout schedule. Each day's plan includes warm-up, main exercises with sets, reps, and specific notes, followed by a cool-down. The focus for each week is also highlighted to guide your training.</p>
+            <button id="done-exercise-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+                Done
+            </button>
+        </div>
+    </section>
+
+    <!-- Workout Logging Section -->
+    <section id="logging-section" class="mb-10 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hidden">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <svg class="w-7 h-7 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            Log Your Workout
+        </h2>
+        <div class="mb-4">
+            <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+                Overall Workout Rating:
+            </label>
+            <div id="workout-rating-stars" class="flex justify-center space-x-2">
+                <!-- Stars will be populated by JavaScript -->
             </div>
-            <div class="mb-6 flex flex-wrap justify-center gap-2 sm:gap-3">
-                </div>
-            <div id="dailyWorkouts" class="mt-6">
-                </div>
-            <div id="workoutDetail" class="mt-8 content-section p-6 hidden">
-                </div>
-        </section>
+        </div>
+        <div class="mb-4">
+            <label for="workoutComment" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+                Comments (Optional):
+            </label>
+            <textarea
+                id="workoutComment"
+                class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 h-24 resize-none"
+                placeholder="How was your workout today?"
+            ></textarea>
+        </div>
+        <button id="submit-log-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+            Submit Log
+        </button>
+    </section>
 
-        <section id="progressionPrinciples" class="main-content-section hidden">
-            <div class="content-section p-6">
-                <h1 class="text-3xl font-bold mb-6 text-primary">Key Principles for Progression</h1>
-                <p class="text-gray-700 mb-4">To maximize your results over these 5 weeks, understanding and applying the principles of progressive overload is crucial. This means continually challenging your muscles so they adapt and grow stronger. Here’s how to approach it:</p>
-                <div class="space-y-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">1. Tracking is Essential</h2>
-                        <p class="text-gray-600">Keep a log (notebook or phone app) of the weights you lift and the reps you achieve for each exercise. This is how you'll track your progress and know when to increase the challenge.</p>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">2. Reps in Reserve (RIR)</h2>
-                        <p class="text-gray-600">This helps gauge your effort:</p>
-                        <ul class="list-disc list-inside text-gray-600 ml-4">
-                            <li><strong>RIR 3-2:</strong> You could have done 2-3 more reps. (Good for learning form, early weeks).</li>
-                            <li><strong>RIR 1-0:</strong> You could only do 0-1 more reps. (Pushing close to your limit, later weeks).</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">3. Progressive Overload Methods</h2>
-                        <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-                            <li><strong>Increase Weight:</strong> The primary method. If you hit the top end of your rep range easily, increase the weight by the smallest increment available (e.g., 1kg, 2.5kg, or one plate on a machine).</li>
-                            <li><strong>Increase Reps:</strong> If you can't increase weight, try to get one or two more reps than last time within the target range.</li>
-                            <li><strong>Decrease Rest Time:</strong> For accessory work, you can slightly shorten rest periods (e.g., from 60s to 45s) to increase intensity. (Use sparingly, prioritize form and recovery).</li>
-                            <li><strong>Improve Form/Time Under Tension:</strong> Focus on slower, more controlled movements, especially the lowering (eccentric) phase of an exercise. Better form means better muscle activation.</li>
-                        </ul>
-                    </div>
-                     <p class="text-gray-700 mt-4">Remember, consistency and proper form are paramount. Never sacrifice form for heavier weight or more reps.</p>
-                </div>
-            </div>
-        </section>
+    <!-- Weight Progress Section -->
+    <section id="weight-progress-section" class="mb-10 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <svg class="w-7 h-7 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+            Your Weight Progress
+        </h2>
+        <div id="weight-progress-content" class="overflow-x-auto">
+            <!-- Content will be loaded by JavaScript -->
+            <p class="text-gray-700 dark:text-gray-300">Loading weight progress...</p>
+        </div>
+    </section>
 
-        <section id="requiredEquipment" class="main-content-section hidden">
-            <div class="content-section p-6">
-                <h1 class="text-3xl font-bold mb-6 text-primary">Required Equipment</h1>
-                <p class="text-gray-700 mb-4">Before you begin this 5-week workout plan, please ensure your office gym or workout space has access to the following equipment. Having the right tools will help you perform the exercises correctly and safely.</p>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
-                    <li><strong>Dumbbells:</strong> A good range of weights, ideally from 2.5kg up to at least 20-25kg (in 1kg, 2.5kg, or 5kg increments).</li>
-                    <li><strong>Barbell & Weight Plates:</strong> An Olympic barbell with various weight plates (e.g., 2.5kg, 5kg, 10kg, 20kg).</li>
-                    <li><strong>Adjustable Bench:</strong> A bench that can be set to flat, incline, and ideally decline positions.</li>
-                    <li><strong>Squat Rack / Power Rack / Smith Machine:</strong> For safely performing barbell squats and presses.</li>
-                    <li><strong>Cable Machine / Functional Trainer:</strong> With various attachments (D-handle, rope, straight bar).</li>
-                    <li><strong>Lat Pulldown Machine:</strong> For back exercises.</li>
-                    <li><strong>Seated Calf Raise Machine:</strong> Or a sturdy step/plate for standing calf raises.</li>
-                    <li><strong>Cardio Equipment:</strong> Treadmill, stationary bike, elliptical, or rower.</li>
-                    <li><strong>Mat:</strong> For core work and stretching.</li>
-                    <li><strong>Sturdy Chair:</strong> For chair squats.</li>
-                    <li><strong>Barbell Pad (Recommended):</strong> For comfort during Hip Thrusts.</li>
-                </ul>
-                 <p class="text-gray-700 mt-6">If your gym is missing a specific piece of equipment, check the exercise notes for potential alternatives or focus on performing the exercise with excellent form using what's available. Some exercises can be adapted (e.g., cable exercises with dumbbells).</p>
-            </div>
-        </section>
+    <!-- Workout History Section -->
+    <section id="workout-history-section" class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <svg class="w-7 h-7 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            Workout History
+        </h2>
+        <div id="workout-history-content" class="space-y-4">
+            <!-- Content will be loaded by JavaScript -->
+            <p class="text-gray-700 dark:text-gray-300">Loading workout history...</p>
+        </div>
+    </section>
 
-        <section id="importantReminders" class="main-content-section hidden">
-            <div class="content-section p-6">
-                <h1 class="text-3xl font-bold mb-6 text-primary">Important Reminders for Your 5 Weeks</h1>
-                <p class="text-gray-700 mb-4">To get the most out of this 5-week plan and ensure you're supporting your body effectively, keep these crucial reminders in mind:</p>
-                <div class="space-y-4">
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Nutrition</h2>
-                        <p class="text-gray-600">Prioritize protein intake (aim for 1.6–2.2g per kg of your body weight) to support muscle repair and growth. Fuel your body with whole, unprocessed foods. Stay well-hydrated by drinking plenty of water throughout the day.</p>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Sleep</h2>
-                        <p class="text-gray-600">Aim for 7–9 hours of quality sleep per night. Sleep is when your body recovers, repairs muscle tissue, and consolidates learning. It's crucial for performance and results.</p>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Consistency</h2>
-                        <p class="text-gray-600">The key to seeing results is showing up and putting in the effort consistently. Stick to the schedule as much as possible. Even on days you don't feel 100%, a lighter workout or active recovery is often better than skipping entirely (unless you genuinely need rest).</p>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-800">Listen to Your Body</h2>
-                        <p class="text-gray-600">If you feel sharp pain during an exercise, stop immediately. Differentiate between muscle soreness (normal) and joint pain (a warning sign). If you're overly fatigued or feeling unwell, consider an extra rest day or slightly reducing the volume/intensity of your workout. It's a 5-week plan, but don't push through significant pain or illness, as this can lead to injury or burnout.</p>
-                    </div>
-                     <p class="text-gray-700 mt-4">By paying attention to these areas alongside your training, you'll set yourself up for a successful and rewarding 5 weeks!</p>
-                </div>
-            </div>
-        </section>
-    </main>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <footer class="bg-gray-800 text-white text-center p-4 mt-12">
-        <p>&copy; 2025 Interactive Workout Plan. Stay Strong!</p>
-    </footer>
+        // Global Firebase variables
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
 
-    <script>
-const workoutData = {
-  "Week 1": {
-                focus: "Foundation & Form Mastery. Aim for 2-3 Reps in Reserve (RIR) on most sets.",
-                days: {
-                    "Monday, May 26, 2025": {
-                        title: "Upper Body Power",
-                        warmUp: ["Light cardio (treadmill, bike, or rower): 5 min", "Shoulder circles, arm swings, band pull-aparts: 2 min", "Push-ups: 2 sets of 12–15 reps"],
-                        mainWorkout: [
-                            { name: "Incline Dumbbell Press", setsReps: "3 sets × 8 reps", notes: "Focus on controlled movement and feeling your chest work." },
-                            { name: "Dumbbell Chest-Supported Row", setsReps: "3 sets × 8 reps", notes: "Squeeze your shoulder blades together at the top." },
-                            { name: "Overhead Press (Barbell or Dumbbell)", setsReps: "4 sets × 6 reps", notes: "Controlled lowering (eccentric phase)." },
-                            { name: "One-Arm Cable Row", setsReps: "3 sets × 10 reps", notes: "Pull with your back muscles, not just your arm." },
-                            { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 sets × 10 reps", notes: "" },
-                            { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 sets × 10 reps", notes: "Perform back-to-back with minimal rest between exercises, then rest before the next superset." }
-                        ],
-                        coolDown: ["Stretching: chest, shoulders, arms, and back."]
-                    },
-                    "Tuesday, May 27, 2025": {
-                        title: "Lower Body Foundation",
-                        warmUp: ["Light cardio: 5 min", "Bodyweight squats, lunges, leg swings: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Back Squat", setsReps: "4 sets × 6 reps", notes: "Focus on depth (hips below knees) and bracing your core." },
-                            { name: "Romanian Deadlift", setsReps: "3 sets × 6 reps", notes: "Feel the stretch in your hamstrings; keep a slight bend in your knees." },
-                            { name: "Walking Lunges", setsReps: "3 sets × 6 reps per leg", notes: "Maintain balance and control." },
-                            { name: "Seated Calf Raise", setsReps: "4 sets × 12 reps", notes: "Full range of motion, squeeze at the top." },
-                            { name: "Decline Crunches", setsReps: "4 sets × 12 reps", notes: "Focus on core contraction, avoid pulling with your neck." }
-                        ],
-                        coolDown: ["Stretching: hamstrings, quads, calves, lower back."]
-                    },
-                    "Wednesday, May 28, 2025": {
-                        title: "Upper Body Volume",
-                        warmUp: ["Light cardio: 5 min", "Shoulder mobility, band pull-aparts, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Barbell Bench Press", setsReps: "3 sets × 4 reps (heavy but controlled)", notes: "Focus on a stable base and controlled lowering to your chest." },
-                            { name: "Lat Pulldown", setsReps: "3 sets × 8 reps", notes: "Pull the bar down using your lats, not just your arms." },
-                            { name: "Seated Dumbbell Shoulder Press", setsReps: "3 sets × 8 reps", notes: "Controlled descent, keep your core tight." },
-                            { name: "Cable Lateral Raise", setsReps: "3 sets × 10 reps", notes: "Lead with your elbows, avoid shrugging." },
-                            { name: "Face Pulls", setsReps: "3 sets × 10 reps", notes: "Pull towards your face, externally rotate your shoulders to engage rear delts." }
-                        ],
-                        coolDown: ["Stretching: chest, back, shoulders."]
-                    },
-                    "Thursday, May 29, 2025": {
-                        title: "Active Recovery/Cardio",
-                        warmUp: ["Light cardio: 5 min"],
-                        mainWorkout: [
-                            { name: "Steady-State Cardio", setsReps: "20–30 min (elliptical, bike, or jog)", notes: "Maintain a conversational pace." },
-                            { name: "Mobility Drills", setsReps: "10 min (hip openers, shoulder mobility, dynamic stretches)", notes: "Focus on improving your range of motion." },
-                            { name: "Core Circuit: Plank", setsReps: "3 sets × 45–60 sec", notes: "Keep a straight line from head to heels." },
-                            { name: "Core Circuit: Bicycle Crunches", setsReps: "3 sets × 15 reps per side", notes: "Focus on twisting your torso." },
-                            { name: "Core Circuit: Leg Raises", setsReps: "3 sets × 12–15 reps", notes: "Keep your lower back pressed into the floor. Perform core exercises back-to-back with minimal rest, then rest before the next circuit." }
-                        ],
-                        coolDown: ["Stretching: full body."]
-                    },
-                    "Friday, May 30, 2025": {
-                        title: "Full Body Power",
-                        warmUp: ["Light cardio: 5 min", "Dynamic stretches, bodyweight squats, push-ups: 2 min"],
-                        mainWorkout: [
-                            { name: "Squats", setsReps: "3 sets × 6 reps", notes: "Can be barbell or dumbbell. Focus on form." },
-                            { name: "Dumbbell Row", setsReps: "3 sets × 8 reps", notes: "Full stretch at the bottom, pull with your back." },
-                            { name: "Hip Thrusts", setsReps: "3 sets × 10 reps", notes: "Squeeze your glutes hard at the top." },
-                            { name: "Seated Cable Fly", setsReps: "3 sets × 10 reps", notes: "Feel the contraction in your chest." },
-                            { name: "Superset: Standing Calf Raise", setsReps: "3 sets × 15 reps", notes: "" },
-                            { name: "Superset: Reverse Cable Flyes", setsReps: "3 sets × 12 reps", notes: "" }
-                        ],
-                        coolDown: ["Stretching: legs, back, chest."]
-                    },
-                    "Saturday, May 31, 2025": {
-                        title: "Functional Movement",
-                        warmUp: ["Light cardio or dynamic stretching: 5 min"],
-                        mainWorkout: [
-                            { name: "Glute Bridge", setsReps: "2 sets × 10–15 reps", notes: "" },
-                            { name: "Chair Squats", setsReps: "2 sets × 10–15 reps", notes: "" },
-                            { name: "Stationary Lunges", setsReps: "2 sets × 10–15 reps per leg", notes: "" },
-                            { name: "Plank to Downward Dog", setsReps: "2 sets × 10–15 reps (or 30–45 sec hold)", notes: "" },
-                            { name: "Optional: Light cardio", setsReps: "(walking, cycling)", notes: "if feeling fresh." }
-                        ],
-                        coolDown: ["Stretching: hips, legs, back."]
-                    },
-                    "Sunday, June 1, 2025": {
-                        title: "Complete Rest",
-                        warmUp: [],
-                        mainWorkout: [{ name: "No formal exercise.", setsReps: "", notes: "Optional: Gentle stretching or light walking. Focus on recovery." }],
-                        coolDown: []
-                    }
-                }
+        // Utility to get current day of the week (0 for Sunday, 1 for Monday, etc.)
+        const getDayOfWeek = (date) => {
+            const d = new Date(date);
+            return d.getDay(); // 0 (Sunday) to 6 (Saturday)
+        };
+
+        const getTodayDateString = () => {
+            const today = new Date();
+            return today.toISOString().split('T')[0]; // YYYY-MM-DD
+        };
+
+        // Exercise data with placeholder images
+        const EXERCISES_DATA = [
+            { id: 'dumbbell-floor-press', name: 'Dumbbell Floor Press', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Floor+Press', description: '3 sets x 10–12 reps' },
+            { id: 'standing-dumbbell-upward-fly', name: 'Standing Dumbbell Upward Fly', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Standing+Dumbbell+Upward+Fly', description: '3 sets x 10–12 reps' },
+            { id: 'dumbbell-push-up', name: 'Dumbbell Push-Up', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Push-Up', description: '3 sets x 8–12 reps' },
+            { id: 'seated-shoulder-press', name: 'Seated Shoulder Press (on chair)', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Seated+Shoulder+Press', description: '3 sets x 10–12 reps' },
+            { id: 'standing-svend-press', name: 'Standing Svend Press', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Standing+Svend+Press', description: '2 sets x 12–15 reps' },
+            { id: 'seated-bicep-curl', name: 'Seated Bicep Curl (on chair)', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Seated+Bicep+Curl', description: '2 sets x 12–15 reps' },
+            { id: 'seated-tricep-extension', name: 'Seated Tricep Extension (on chair)', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Seated+Tricep+Extension', description: '2 sets x 12–15 reps' },
+            { id: 'easy-jog', name: 'Easy Jog', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Easy+Jog', description: '7 min warm-up / 7 min cool-down' },
+            { id: 'dynamic-stretches', name: 'Dynamic Stretches', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dynamic+Stretches', description: 'Warm-up' },
+            { id: '400m-intervals', name: '400m Intervals', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=400m+Intervals', description: '4–5 x 400m at target pace (2 min per rep), 90 sec walk/jog rest' },
+            { id: 'goblet-squat', name: 'Goblet Squat', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Goblet+Squat', description: '3 sets x 8–12 reps' },
+            { id: 'stiff-leg-deadlift', name: 'Stiff-Leg Deadlift', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Stiff-Leg+Deadlift', description: '3 sets x 8–12 reps' },
+            { id: 'dumbbell-lunge', name: 'Dumbbell Lunge', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Lunge', description: '2 sets x 10 reps per leg' },
+            { id: 'calf-raise', name: 'Calf Raise', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Calf+Raise', description: '2 sets x 15 reps' },
+            { id: 'continuous-run', name: 'Continuous Run', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Continuous+Run', description: '20–25 min at a steady pace' },
+            { id: 'dumbbell-squat', name: 'Dumbbell Squat', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Squat', description: '3 sets x 8–12 reps' },
+            { id: 'dumbbell-deadlift', name: 'Dumbbell Deadlift', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Deadlift', description: '3 sets x 8–12 reps' },
+            { id: 'dumbbell-row', name: 'Dumbbell Row', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Row', description: '3 sets x 8–12 reps' },
+            { id: 'dumbbell-press', name: 'Dumbbell Press', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=Dumbbell+Press', description: '3 sets x 8–12 reps' },
+            { id: 'hiit-run', name: 'HIIT Run', imageUrl: 'https://placehold.co/300x200/000000/FFFFFF?text=HIIT+Run', description: '10 min (30s fast/30s recovery, repeat 10x)' },
+        ];
+
+        // Workout plan definition
+        const WORKOUT_PLAN = {
+            1: { // Monday
+                name: 'Upper Body Strength (No Bench Needed)',
+                exercises: [
+                    { id: 'dumbbell-floor-press', sets: 3, reps: '10–12' },
+                    { id: 'standing-dumbbell-upward-fly', sets: 3, reps: '10–12' },
+                    { id: 'dumbbell-push-up', sets: 3, reps: '8–12' },
+                    { id: 'seated-shoulder-press', sets: 3, reps: '10–12' },
+                    { id: 'standing-svend-press', sets: 2, reps: '12–15' },
+                    { id: 'seated-bicep-curl', sets: 2, reps: '12–15' },
+                    { id: 'seated-tricep-extension', sets: 2, reps: '12–15' },
+                ],
+                rest: '45–60 seconds between sets',
+                time: '35–40 min',
             },
-  "Week 2": {
-    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
-    days: {
-      "Monday, June 2, 2025": {
-        title: "Upper Body",
-        warmUp: [
-          "Light cardio (rowing, cycling) 5 min",
-          "Dynamic stretches (arm circles, band pull-aparts)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
-          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
-          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
-          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
-          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
-          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
-        ],
-        coolDown: [
-          "Stretch upper body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Tuesday, June 3, 2025": {
-        title: "Lower Body",
-        warmUp: [
-          "Light cardio (cycling, treadmill) 5 min",
-          "Dynamic stretches (leg swings, hip openers)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
-          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
-          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
-          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
-          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
-        ],
-        coolDown: [
-          "Stretch lower body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Wednesday, June 4, 2025": {
-        title: "Rest / Active Recovery",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
-          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
-          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
-        ],
-        coolDown: []
-      },
-      "Thursday, June 5, 2025": {
-        title: "Push (Chest, Shoulders, Triceps)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic upper body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
-          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
-          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
-          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
-          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
-        ],
-        coolDown: [
-          "Stretch chest, shoulders, triceps; foam rolling"
-        ]
-      },
-      "Friday, June 6, 2025": {
-        title: "Pull (Back, Biceps, Rear Delts)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic stretches (band pull-aparts, arm swings)",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
-          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
-          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
-          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
-          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
-        ],
-        coolDown: [
-          "Stretch back, biceps, rear delts"
-        ]
-      },
-      "Saturday, June 7, 2025": {
-        title: "Legs (Glutes, Hamstrings, Calves)",
-        warmUp: [
-          "Light cardio (treadmill, cycling) 5 min",
-          "Dynamic lower body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
-          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
-          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
-          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
-          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
-        ],
-        coolDown: [
-          "Stretch glutes, hamstrings, calves"
-        ]
-      },
-      "Sunday, June 8, 2025": {
-        title: "Rest / Mobility",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
-          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
-          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
-        ],
-        coolDown: []
-      }
-    }
-  },
-  "Week 3": {
-    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
-    days: {
-      "Monday, June 9, 2025": {
-        title: "Upper Body",
-        warmUp: [
-          "Light cardio (rowing, cycling) 5 min",
-          "Dynamic stretches (arm circles, band pull-aparts)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
-          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
-          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
-          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
-          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
-          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
-        ],
-        coolDown: [
-          "Stretch upper body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Tuesday, June 10, 2025": {
-        title: "Lower Body",
-        warmUp: [
-          "Light cardio (cycling, treadmill) 5 min",
-          "Dynamic stretches (leg swings, hip openers)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
-          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
-          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
-          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
-          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
-        ],
-        coolDown: [
-          "Stretch lower body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Wednesday, June 11, 2025": {
-        title: "Rest / Active Recovery",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
-          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
-          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
-        ],
-        coolDown: []
-      },
-      "Thursday, June 12, 2025": {
-        title: "Push (Chest, Shoulders, Triceps)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic upper body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
-          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
-          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
-          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
-          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
-        ],
-        coolDown: [
-          "Stretch chest, shoulders, triceps; foam rolling"
-        ]
-      },
-      "Friday, June 13, 2025": {
-        title: "Pull (Back, Biceps, Rear Delts)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic stretches (band pull-aparts, arm swings)",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
-          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
-          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
-          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
-          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
-        ],
-        coolDown: [
-          "Stretch back, biceps, rear delts"
-        ]
-      },
-      "Saturday, June 14, 2025": {
-        title: "Legs (Glutes, Hamstrings, Calves)",
-        warmUp: [
-          "Light cardio (treadmill, cycling) 5 min",
-          "Dynamic lower body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
-          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
-          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
-          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
-          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
-        ],
-        coolDown: [
-          "Stretch glutes, hamstrings, calves"
-        ]
-      },
-      "Sunday, June 15, 2025": {
-        title: "Rest / Mobility",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
-          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
-          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
-        ],
-        coolDown: []
-      }
-    }
-  },
-  "Week 4": {
-    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
-    days: {
-      "Monday, June 16, 2025": {
-        title: "Upper Body",
-        warmUp: [
-          "Light cardio (rowing, cycling) 5 min",
-          "Dynamic stretches (arm circles, band pull-aparts)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
-          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
-          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
-          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
-          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
-          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
-        ],
-        coolDown: [
-          "Stretch upper body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Tuesday, June 17, 2025": {
-        title: "Lower Body",
-        warmUp: [
-          "Light cardio (cycling, treadmill) 5 min",
-          "Dynamic stretches (leg swings, hip openers)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
-          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
-          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
-          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
-          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
-        ],
-        coolDown: [
-          "Stretch lower body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Wednesday, June 18, 2025": {
-        title: "Rest / Active Recovery",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
-          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
-          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
-        ],
-        coolDown: []
-      },
-      "Thursday, June 19, 2025": {
-        title: "Push (Chest, Shoulders, Triceps)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic upper body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
-          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
-          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
-          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
-          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
-        ],
-        coolDown: [
-          "Stretch chest, shoulders, triceps; foam rolling"
-        ]
-      },
-      "Friday, June 20, 2025": {
-        title: "Pull (Back, Biceps, Rear Delts)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic stretches (band pull-aparts, arm swings)",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
-          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
-          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
-          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
-          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
-        ],
-        coolDown: [
-          "Stretch back, biceps, rear delts"
-        ]
-      },
-      "Saturday, June 21, 2025": {
-        title: "Legs (Glutes, Hamstrings, Calves)",
-        warmUp: [
-          "Light cardio (treadmill, cycling) 5 min",
-          "Dynamic lower body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
-          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
-          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
-          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
-          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
-        ],
-        coolDown: [
-          "Stretch glutes, hamstrings, calves"
-        ]
-      },
-      "Sunday, June 22, 2025": {
-        title: "Rest / Mobility",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
-          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
-          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
-        ],
-        coolDown: []
-      }
-    }
-  },
-  "Week 5": {
-    focus: "UL-PPL: Muscle & strength gain with a focus on safe progression and back health.",
-    days: {
-      "Monday, June 23, 2025": {
-        title: "Upper Body",
-        warmUp: [
-          "Light cardio (rowing, cycling) 5 min",
-          "Dynamic stretches (arm circles, band pull-aparts)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Incline Dumbbell Press", setsReps: "3 × 8", notes: "Controlled descent, full range, slight incline" },
-          { name: "Dumbbell Chest-Supported Row", setsReps: "3 × 8", notes: "Keep chest supported, squeeze shoulder blades" },
-          { name: "Overhead Press (Dumbbell)", setsReps: "3 × 6–8", notes: "Keep core tight, avoid hyperextension" },
-          { name: "One-Arm Cable Row", setsReps: "3 × 10", notes: "Pull through elbow, retract scapula" },
-          { name: "Superset: Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Controlled, no swinging" },
-          { name: "Superset: Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, controlled" }
-        ],
-        coolDown: [
-          "Stretch upper body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Tuesday, June 24, 2025": {
-        title: "Lower Body",
-        warmUp: [
-          "Light cardio (cycling, treadmill) 5 min",
-          "Dynamic stretches (leg swings, hip openers)",
-          "1–2 warm-up sets with lighter weights"
-        ],
-        mainWorkout: [
-          { name: "Barbell Back Squat", setsReps: "4 × 6", notes: "Brace core, maintain neutral spine, controlled depth" },
-          { name: "Romanian Deadlift", setsReps: "3 × 6", notes: "Soft knees, hip hinge, feel hamstring stretch" },
-          { name: "Walking Lunges", setsReps: "3 × 6 per leg", notes: "Maintain upright torso, controlled steps" },
-          { name: "Seated Calf Raise", setsReps: "4 × 12", notes: "Full range, pause at the top" },
-          { name: "Decline Crunches", setsReps: "4 × 12", notes: "Focus on core contraction, slow and controlled" }
-        ],
-        coolDown: [
-          "Stretch lower body muscles, foam rolling, deep breathing"
-        ]
-      },
-      "Wednesday, June 25, 2025": {
-        title: "Rest / Active Recovery",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Light Cardio or Mobility", setsReps: "20–30 min", notes: "Walking, cycling, or mobility drills" },
-          { name: "Core Stabilization", setsReps: "2–3 sets", notes: "Planks, bird dogs" },
-          { name: "Gentle Stretching", setsReps: "", notes: "Hips, hamstrings, lower back" }
-        ],
-        coolDown: []
-      },
-      "Thursday, June 26, 2025": {
-        title: "Push (Chest, Shoulders, Triceps)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic upper body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Barbell or Dumbbell Bench Press", setsReps: "4 × 6–8", notes: "Controlled tempo, full range" },
-          { name: "Seated Dumbbell Shoulder Press", setsReps: "3 × 8", notes: "Avoid arching back, controlled eccentric" },
-          { name: "Cable Lateral Raise", setsReps: "3 × 10", notes: "Lead with elbows, avoid swinging" },
-          { name: "Overhead Dumbbell Extension", setsReps: "3 × 10", notes: "Keep elbows close, full stretch" },
-          { name: "Seated Cable Fly", setsReps: "3 × 10", notes: "Squeeze chest at peak contraction" }
-        ],
-        coolDown: [
-          "Stretch chest, shoulders, triceps; foam rolling"
-        ]
-      },
-      "Friday, June 27, 2025": {
-        title: "Pull (Back, Biceps, Rear Delts)",
-        warmUp: [
-          "Light cardio 5 min",
-          "Dynamic stretches (band pull-aparts, arm swings)",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Pull-Ups or Lat Pulldown", setsReps: "4 × 6–8", notes: "Full stretch, control on way down" },
-          { name: "Dumbbell Row", setsReps: "3 × 8", notes: "Full stretch, retract scapula" },
-          { name: "Face Pulls", setsReps: "3 × 12", notes: "Pull towards face, external rotation of shoulders" },
-          { name: "Lying Incline Dumbbell Curl", setsReps: "3 × 10", notes: "Avoid swinging, controlled" },
-          { name: "Reverse Cable Flyes", setsReps: "3 × 12", notes: "Squeeze rear delts, avoid shrugging" }
-        ],
-        coolDown: [
-          "Stretch back, biceps, rear delts"
-        ]
-      },
-      "Saturday, June 28, 2025": {
-        title: "Legs (Glutes, Hamstrings, Calves)",
-        warmUp: [
-          "Light cardio (treadmill, cycling) 5 min",
-          "Dynamic lower body stretches",
-          "1–2 warm-up sets"
-        ],
-        mainWorkout: [
-          { name: "Bulgarian Split Squat", setsReps: "3 × 8 per leg", notes: "Keep torso upright, knee track over foot" },
-          { name: "Hip Thrusts", setsReps: "3 × 10", notes: "Squeeze glutes at the top" },
-          { name: "Romanian Deadlift", setsReps: "3 × 8", notes: "Focus on hamstring stretch, hip hinge" },
-          { name: "Standing Calf Raise", setsReps: "4 × 15", notes: "Full range, controlled" },
-          { name: "Plank (Core)", setsReps: "3 × 30–45 sec", notes: "Keep hips neutral, avoid sagging" }
-        ],
-        coolDown: [
-          "Stretch glutes, hamstrings, calves"
-        ]
-      },
-      "Sunday, June 29, 2025": {
-        title: "Rest / Mobility",
-        warmUp: [],
-        mainWorkout: [
-          { name: "Gentle Stretching & Foam Rolling", setsReps: "", notes: "" },
-          { name: "Light Walking or Swimming", setsReps: "", notes: "" },
-          { name: "Focus on Recovery & Sleep", setsReps: "", notes: "" }
-        ],
-        coolDown: []
-      }
-    }
-  }
-};
+            2: { // Tuesday
+                name: 'Speed Intervals (5K Pace)',
+                exercises: [
+                    { id: 'easy-jog', description: 'Warm-up: 7 min easy jog' },
+                    { id: 'dynamic-stretches', description: 'Warm-up: Dynamic stretches' },
+                    { id: '400m-intervals', description: 'Main Set: 4–5 x 400m at target pace (2 min per rep), 90 sec walk/jog rest' },
+                    { id: 'easy-jog', description: 'Cool-down: 7 min easy jog' },
+                ],
+                rest: 'Focus on running each interval at your goal 5K pace.',
+                time: '38 min',
+            },
+            3: { // Wednesday
+                name: 'Lower Body Strength',
+                exercises: [
+                    { id: 'goblet-squat', sets: 3, reps: '8–12' },
+                    { id: 'stiff-leg-deadlift', sets: 3, reps: '8–12' },
+                    { id: 'dumbbell-lunge', sets: 2, reps: '10 per leg' },
+                    { id: 'calf-raise', sets: 2, reps: '15' },
+                ],
+                rest: '60 seconds between sets',
+                time: '28 min',
+            },
+            4: { // Thursday
+                name: 'Tempo/Steady-State Run',
+                exercises: [
+                    { id: 'continuous-run', description: 'Continuous Run: 20–25 min at a steady pace (just slower than goal 5K pace)' },
+                    { id: 'easy-jog', description: 'Optional: 5 min easy jog to cool down' },
+                ],
+                rest: 'Keep the pace controlled—focus on endurance and running form.',
+                time: '25 min',
+            },
+            5: { // Friday
+                name: 'Full Body Strength + HIIT',
+                exercises: [
+                    { id: 'dumbbell-squat', sets: 3, reps: '8–12' },
+                    { id: 'dumbbell-deadlift', sets: 3, reps: '8–12' },
+                    { id: 'dumbbell-row', sets: 3, reps: '8–12' },
+                    { id: 'dumbbell-press', sets: 3, reps: '8–12' },
+                    { id: 'hiit-run', description: 'HIIT Run: 10 min (30s fast/30s recovery, repeat 10x)' },
+                ],
+                rest: '60 seconds between sets. Move efficiently to stay within 45 minutes.',
+                time: '45 min',
+            },
+        };
 
+        // UI State Variables
+        let currentDay;
+        let activeWorkout = null; // null, 'planning', 'in-progress', 'logging'
+        let currentExerciseIndex = 0;
+        let timer = 0;
+        let timerActive = false;
+        let workoutLog = {};
+        let workoutRating = 0;
+        let workoutComment = '';
+        let weightInput = '';
+        let weightLogs = [];
+        let workoutHistory = [];
+        let showMessage = null; // For custom modal messages
 
-        let currentWeek = "Week 1";
-        let currentDay = null;
+        const todayDate = getTodayDateString();
+        let workoutForToday; // Will be set after currentDay is determined
 
-        const weekTabsContainer = document.querySelector('#weeklyPlan .flex-wrap');
-        const dailyWorkoutsContainer = document.getElementById('dailyWorkouts');
-        const workoutDetailContainer = document.getElementById('workoutDetail');
-        const mainContentSections = document.querySelectorAll('.main-content-section');
-        const navLinks = document.querySelectorAll('header .nav-link');
-        const mobileMenuButton = document.querySelector('.md\\:hidden button');
-        const mobileMenu = document.getElementById('mobile-menu');
+        // DOM Elements
+        const dailyWorkoutSection = document.getElementById('daily-workout-section');
+        const dailyWorkoutContent = document.getElementById('daily-workout-content');
+        const activeWorkoutSection = document.getElementById('active-workout-section');
+        const activeWorkoutContent = document.getElementById('active-workout-content');
+        const loggingSection = document.getElementById('logging-section');
+        const weightProgressSection = document.getElementById('weight-progress-section');
+        const weightProgressContent = document.getElementById('weight-progress-content');
+        const workoutHistorySection = document.getElementById('workout-history-section');
+        const workoutHistoryContent = document.getElementById('workout-history-content');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const todayDateDisplay = document.getElementById('today-date-display');
 
-        function showSection(sectionId) {
-            mainContentSections.forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
+        const startWorkoutBtn = document.getElementById('start-workout-btn');
+        const doneExerciseBtn = document.getElementById('done-exercise-btn');
+        const submitLogBtn = document.getElementById('submit-log-btn');
+        const weightInputEl = document.getElementById('weightInput');
+        const workoutCommentEl = document.getElementById('workoutComment');
+        const workoutRatingStarsEl = document.getElementById('workout-rating-stars');
+        const restTimerDisplay = document.getElementById('rest-timer-display');
+        const timerSecondsSpan = document.getElementById('timer-seconds');
 
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('onclick').includes(sectionId)) {
-                    link.classList.add('active');
+        const modalMessageContainer = document.getElementById('modal-message-container');
+        const modalMessageText = document.getElementById('modal-message-text');
+        const modalMessageOkBtn = document.getElementById('modal-message-ok-btn');
+
+        // Helper to find exercise details
+        const getExerciseDetails = (id) => EXERCISES_DATA.find(ex => ex.id === id);
+
+        // --- Modal Message Functions ---
+        const showModalMessage = (message) => {
+            showMessage = message;
+            modalMessageText.textContent = message;
+            modalMessageContainer.classList.remove('hidden');
+        };
+
+        const hideModalMessage = () => {
+            showMessage = null;
+            modalMessageContainer.classList.add('hidden');
+        };
+
+        // --- Render Functions ---
+        const renderDailyWorkout = () => {
+            todayDateDisplay.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            if (workoutForToday) {
+                let html = `
+                    <h3 class="text-xl sm:text-2xl font-semibold text-blue-600 dark:text-blue-300 mb-3">${workoutForToday.name}</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2">Est. Time: ${workoutForToday.time}</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">Rest: ${workoutForToday.rest}</p>
+                    <ul class="space-y-3 mb-6">
+                `;
+                workoutForToday.exercises.forEach((ex, index) => {
+                    const details = getExerciseDetails(ex.id);
+                    html += `
+                        <li class="flex items-center text-gray-800 dark:text-gray-200">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            ${details ? details.name : ex.id} ${ex.sets ? `${ex.sets} sets x ${ex.reps}` : ''} ${ex.description ? `(${ex.description})` : ''}
+                        </li>
+                    `;
+                });
+                html += `</ul>`;
+
+                if (activeWorkout === null) {
+                    html += `
+                        <button id="start-workout-btn-dynamic" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+                            Start Workout
+                        </button>
+                    `;
                 }
-            });
-             if (!mobileMenu.classList.contains('hidden')) {
-                toggleMobileMenu();
+                dailyWorkoutContent.innerHTML = html;
+
+                // Re-attach event listener for the dynamically created button
+                const dynamicStartBtn = document.getElementById('start-workout-btn-dynamic');
+                if (dynamicStartBtn) {
+                    dynamicStartBtn.onclick = startWorkout;
+                }
+
+            } else {
+                dailyWorkoutContent.innerHTML = '<p class="text-gray-700 dark:text-gray-300">No scheduled workout for today. Enjoy your rest day!</p>';
             }
-            window.scrollTo(0,0);
-        }
+        };
 
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('hidden');
-            const icons = mobileMenuButton.querySelectorAll('svg');
-            icons[0].classList.toggle('hidden');
-            icons[1].classList.toggle('hidden');
-        }
+        const renderActiveWorkout = () => {
+            if (activeWorkout === 'in-progress' && workoutForToday && currentExerciseIndex < workoutForToday.exercises.length) {
+                activeWorkoutSection.classList.remove('hidden');
+                dailyWorkoutSection.classList.add('hidden');
+                loggingSection.classList.add('hidden');
 
+                const currentExercise = workoutForToday.exercises[currentExerciseIndex];
+                const details = getExerciseDetails(currentExercise.id);
 
-        function displayWeekTabs() {
-            weekTabsContainer.innerHTML = '';
-            Object.keys(workoutData).forEach(weekName => {
-                const tab = document.createElement('button');
-                tab.textContent = weekName;
-                tab.className = `week-tab px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-medium rounded-md shadow-sm focus:outline-none ${weekName === currentWeek ? 'active bg-primary text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
-                tab.onclick = () => selectWeek(weekName);
-                weekTabsContainer.appendChild(tab);
-            });
-        }
+                document.getElementById('exercise-progress').textContent = `Exercise ${currentExerciseIndex + 1} of ${workoutForToday.exercises.length}`;
+                document.getElementById('current-exercise-name').textContent = details?.name || currentExercise.id;
+                document.getElementById('current-exercise-details').textContent =
+                    `${currentExercise.sets ? `${currentExercise.sets} sets x ${currentExercise.reps}` : ''} ${currentExercise.description ? `(${currentExercise.description})` : ''}`;
+                document.getElementById('current-exercise-image').src = details?.imageUrl || 'https://placehold.co/300x200/CCCCCC/000000?text=Image+Not+Found';
+                weightInputEl.value = weightInput;
 
-        function selectWeek(weekName) {
-            currentWeek = weekName;
-            currentDay = null;
-            displayWeekTabs();
-            displayDayCards();
-            workoutDetailContainer.classList.add('hidden');
-            workoutDetailContainer.innerHTML = '';
-        }
+                if (timerActive) {
+                    restTimerDisplay.classList.remove('hidden');
+                    timerSecondsSpan.textContent = timer;
+                } else {
+                    restTimerDisplay.classList.add('hidden');
+                }
+            } else {
+                activeWorkoutSection.classList.add('hidden');
+            }
+        };
 
-        function displayDayCards() {
-            dailyWorkoutsContainer.innerHTML = '';
-            const week = workoutData[currentWeek];
-            if (!week) return;
+        const renderLoggingSection = () => {
+            if (activeWorkout === 'logging' && workoutForToday) {
+                loggingSection.classList.remove('hidden');
+                dailyWorkoutSection.classList.add('hidden');
+                activeWorkoutSection.classList.add('hidden');
 
-            const focusEl = document.createElement('p');
-            focusEl.className = 'text-center text-gray-600 italic mb-6 px-2';
-            focusEl.textContent = `Focus for ${currentWeek}: ${week.focus}`;
-            dailyWorkoutsContainer.appendChild(focusEl);
-            
-            const daysGrid = document.createElement('div');
-            daysGrid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4';
+                // Render stars
+                workoutRatingStarsEl.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const starBtn = document.createElement('button');
+                    starBtn.textContent = '★';
+                    starBtn.classList.add('text-3xl', 'transition-colors', 'duration-200');
+                    if (i <= workoutRating) {
+                        starBtn.classList.add('text-yellow-400');
+                    } else {
+                        starBtn.classList.add('text-gray-400');
+                    }
+                    starBtn.dataset.rating = i;
+                    starBtn.onclick = (e) => {
+                        setWorkoutRating(parseInt(e.target.dataset.rating));
+                        renderLoggingSection(); // Re-render to update star colors
+                    };
+                    workoutRatingStarsEl.appendChild(starBtn);
+                }
+                workoutCommentEl.value = workoutComment;
+            } else {
+                loggingSection.classList.add('hidden');
+            }
+        };
 
-            Object.keys(week.days).forEach(dayName => {
-                const dayData = week.days[dayName];
-                const card = document.createElement('div');
-                const isCompleted = localStorage.getItem(`${currentWeek}-${dayName}-completed`) === 'true';
-                card.className = `day-card p-3 sm:p-4 rounded-lg border-2 border-gray-300 cursor-pointer text-center ${dayName === currentDay ? 'active' : 'bg-white hover:bg-gray-50'} ${isCompleted ? 'completed-day' : ''}`;
-                card.id = `card-${currentWeek}-${dayName.replace(/[^a-zA-Z0-9]/g, '-')}`;
-                card.innerHTML = `<h3 class="font-semibold text-sm sm:text-base text-gray-800">${dayName.split(',')[0]}</h3><p class="text-xs sm:text-sm text-gray-500">${dayData.title}</p>`;
-                card.onclick = () => selectDay(dayName);
-                daysGrid.appendChild(card);
-            });
-            dailyWorkoutsContainer.appendChild(daysGrid);
-        }
+        const renderWeightProgress = () => {
+            if (weightLogs.length > 0) {
+                let html = `
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider rounded-tl-lg">
+                                        Date
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider rounded-tr-lg">
+                                        Weight (kg/lbs)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                `;
+                weightLogs.forEach((log) => {
+                    html += `
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                        ${new Date(log.date).toLocaleDateString()}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                        ${log.weight}
+                                    </td>
+                                </tr>
+                    `;
+                });
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                weightProgressContent.innerHTML = html;
+            } else {
+                weightProgressContent.innerHTML = '<p class="text-gray-700 dark:text-gray-300">No weight entries yet. Log your weight after a workout!</p>';
+            }
+        };
 
-        function selectDay(dayName) {
-            currentDay = dayName;
-            displayDayCards();
-            displayWorkoutDetail(dayName);
-        }
+        const renderWorkoutHistory = () => {
+            if (workoutHistory.length > 0) {
+                let html = '<div class="space-y-4">';
+                workoutHistory.forEach((log) => {
+                    html += `
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600">
+                            <p class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                                ${log.workoutName} on ${new Date(log.date).toLocaleDateString()}
+                            </p>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mb-2">
+                                Rating: ${log.rating} / 5 stars
+                            </p>
+                            ${log.comment ? `<p class="text-gray-700 dark:text-gray-400 text-sm italic mb-2">"${log.comment}"</p>` : ''}
+                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                                <span class="font-bold">Exercises:</span>
+                                <ul class="list-disc list-inside ml-2">
+                    `;
+                    for (const exerciseId in log.exercisesPerformed) {
+                        const details = log.exercisesPerformed[exerciseId];
+                        const exName = EXERCISES_DATA.find(e => e.id === exerciseId)?.name || exerciseId;
+                        html += `
+                                    <li>
+                                        ${exName} ${details.weight ? `(Weight: ${details.weight})` : ''}
+                                    </li>
+                        `;
+                    }
+                    html += `
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                workoutHistoryContent.innerHTML = html;
+            } else {
+                workoutHistoryContent.innerHTML = '<p class="text-gray-700 dark:text-gray-300">No workout logs yet. Complete a workout to see your history!</p>';
+            }
+        };
 
-        function formatList(items, listType = 'ul') {
-            if (!items || items.length === 0) return '<p class="text-gray-500">None specified.</p>';
-            return `<${listType} class="list-disc list-inside space-y-1 text-gray-700 ml-4">` +
-                   items.map(item => `<li>${item}</li>`).join('') +
-                   `</${listType}>`;
-        }
-        
-        function displayWorkoutDetail(dayName) {
-            const dayData = workoutData[currentWeek].days[dayName];
-            if (!dayData) {
-                workoutDetailContainer.innerHTML = '<p>No workout details found for this day.</p>';
-                workoutDetailContainer.classList.remove('hidden');
+        const updateUI = () => {
+            renderDailyWorkout();
+            renderActiveWorkout();
+            renderLoggingSection();
+            renderWeightProgress();
+            renderWorkoutHistory();
+        };
+
+        // --- State Updaters (mimicking React useState) ---
+        const setWeightInput = (value) => {
+            weightInput = value;
+            if (activeWorkout === 'in-progress') {
+                weightInputEl.value = weightInput; // Update input field directly
+            }
+        };
+
+        const setWorkoutRating = (value) => {
+            workoutRating = value;
+            // Re-render logging section to update star colors
+            renderLoggingSection();
+        };
+
+        const setWorkoutComment = (value) => {
+            workoutComment = value;
+        };
+
+        const setTimerState = (newTimer, newTimerActive) => {
+            timer = newTimer;
+            timerActive = newTimerActive;
+            renderActiveWorkout(); // Re-render to update timer display
+        };
+
+        const setActiveWorkoutState = (newState) => {
+            activeWorkout = newState;
+            updateUI(); // Re-render all sections based on new activeWorkout state
+        };
+
+        const setCurrentExerciseIndex = (newIndex) => {
+            currentExerciseIndex = newIndex;
+            renderActiveWorkout(); // Re-render active workout section
+        };
+
+        // --- Workout Logic ---
+        let timerInterval = null;
+
+        const startTimer = () => {
+            setTimerState(45, true);
+            showModalMessage("Rest for 45 seconds...");
+            timerInterval = setInterval(() => {
+                if (timer > 0) {
+                    setTimerState(timer - 1, true);
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    setTimerState(0, false);
+                    showModalMessage("Time for the next exercise!");
+                }
+            }, 1000);
+        };
+
+        const startWorkout = () => {
+            setActiveWorkoutState('in-progress');
+            setCurrentExerciseIndex(0);
+            workoutLog = {}; // Reset log for new workout
+            workoutRating = 0;
+            workoutComment = '';
+            weightInput = '';
+            weightInputEl.value = ''; // Clear input field
+            workoutCommentEl.value = ''; // Clear comment field
+        };
+
+        const handleDoneExercise = () => {
+            if (workoutForToday && workoutForToday.exercises[currentExerciseIndex]) {
+                const exerciseId = workoutForToday.exercises[currentExerciseIndex].id;
+                workoutLog = {
+                    ...workoutLog,
+                    [exerciseId]: {
+                        weight: weightInputEl.value, // Get current value from input
+                    }
+                };
+                setWeightInput(''); // Clear weight input for next exercise
+            }
+
+            if (currentExerciseIndex < workoutForToday.exercises.length - 1) {
+                setCurrentExerciseIndex(currentExerciseIndex + 1);
+                startTimer();
+            } else {
+                setActiveWorkoutState('logging'); // Move to logging phase
+                showModalMessage("Workout completed! Now log your overall details.");
+            }
+        };
+
+        const submitWorkoutLog = async () => {
+            if (!db || !userId) {
+                console.error("Firestore not initialized or user not logged in.");
+                showModalMessage("Error: Could not save workout. Please try again.");
                 return;
             }
 
-            let html = `<h2 class="text-2xl font-bold mb-1 text-primary">${dayName}</h2>`;
-            html += `<h3 class="text-xl font-semibold mb-4 text-gray-800">${dayData.title}</h3>`;
-
-            if (dayData.warmUp && dayData.warmUp.length > 0) {
-                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Warm-up:</h4>';
-                html += formatList(dayData.warmUp);
-            }
-
-            if (dayData.mainWorkout && dayData.mainWorkout.length > 0) {
-                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Main Workout:</h4>';
-                html += '<ul class="space-y-3">';
-                dayData.mainWorkout.forEach((ex, index) => {
-                    const exerciseId = `${currentWeek}-${dayName.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
-                    const storedWeight = localStorage.getItem(`weight-${exerciseId}`) || '';
-                    html += `<li class="p-3 bg-gray-50 rounded-md flex items-center flex-wrap">
-                                <strong class="text-gray-800">${ex.name}</strong>: ${ex.setsReps}
-                                <button class="llm-button" onclick="explainExercise('${ex.name}', 'llm-response-${exerciseId}')">Explain ✨</button>
-                                <input type="text" id="weight-input-${exerciseId}" class="weight-input" placeholder="Weight (e.g., 10kg)" value="${storedWeight}" onchange="updateWeight('${exerciseId}')">
-                                ${ex.notes ? `<p class="text-sm text-gray-600 italic mt-1 w-full">${ex.notes}</p>` : ''}
-                                <div id="llm-response-${exerciseId}" class="llm-response hidden w-full mt-2"></div>
-                             </li>`;
-                });
-                html += '</ul>';
-            }
-
-            if (dayData.coolDown && dayData.coolDown.length > 0) {
-                html += '<h4 class="text-lg font-semibold mt-4 mb-2 text-gray-700">Cool-down:</h4>';
-                html += formatList(dayData.coolDown);
-            }
-
-            const isCompleted = localStorage.getItem(`${currentWeek}-${dayName}-completed`) === 'true';
-            html += `<div class="mt-6 text-center">
-                        <button id="complete-workout-btn" class="complete-button ${isCompleted ? 'completed' : ''}" onclick="toggleWorkoutCompletion()">
-                            ${isCompleted ? 'Workout Completed!' : 'Mark as Complete'}
-                        </button>
-                        <button class="llm-button mt-4 w-full" onclick="getDailyPepTalk('daily-pep-talk-response')">Get Daily Pep Talk ✨</button>
-                        <div id="daily-pep-talk-response" class="llm-response hidden w-full mt-2"></div>
-                    </div>`;
-            
-            workoutDetailContainer.innerHTML = html;
-            workoutDetailContainer.classList.remove('hidden');
-        }
-
-        async function callGeminiAPI(prompt, outputElementId) {
-            const outputElement = document.getElementById(outputElementId);
-            if (!outputElement) return;
-
-            outputElement.innerHTML = '<span class="llm-loading">Loading...</span>';
-            outputElement.classList.remove('hidden');
-
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Leave as-is, Canvas provides at runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const workoutsColRef = collection(db, `artifacts/${__app_id}/users/${userId}/workouts`);
+                await addDoc(workoutsColRef, {
+                    date: todayDate,
+                    dayOfWeek: currentDay,
+                    workoutName: workoutForToday.name,
+                    exercisesPerformed: workoutLog,
+                    rating: workoutRating,
+                    comment: workoutCommentEl.value, // Get current value from textarea
+                    timestamp: new Date(),
                 });
-                const result = await response.json();
 
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    outputElement.innerHTML = text;
-                } else {
-                    outputElement.innerHTML = 'Sorry, could not generate a response.';
-                    console.error('Gemini API response structure unexpected:', result);
+                // Log daily weight if provided
+                if (weightInputEl.value) { // Check input field value
+                    const weightDocRef = doc(db, `artifacts/${__app_id}/users/${userId}/weight_progress`, todayDate);
+                    await setDoc(weightDocRef, {
+                        date: todayDate,
+                        weight: parseFloat(weightInputEl.value),
+                        timestamp: new Date(),
+                    }, { merge: true }); // Use merge to update if already exists
                 }
+
+                showModalMessage("Workout and weight logged successfully!");
+                setActiveWorkoutState(null); // Go back to main view
+                workoutLog = {};
+                workoutRating = 0;
+                workoutComment = '';
+                weightInput = '';
+                weightInputEl.value = ''; // Clear input field
+                workoutCommentEl.value = ''; // Clear comment field
             } catch (error) {
-                outputElement.innerHTML = 'Error: Could not connect to the API.';
-                console.error('Error calling Gemini API:', error);
+                console.error("Error submitting workout log:", error);
+                showModalMessage(`Error saving workout: ${error.message}`);
             }
-        }
+        };
 
-        function explainExercise(exerciseName, outputElementId) {
-            const prompt = `Provide a brief explanation and 3-4 key form tips for the "${exerciseName}" exercise, suitable for a beginner in a workout app. Keep it concise.`;
-            callGeminiAPI(prompt, outputElementId);
-        }
-
-        function getDailyPepTalk(outputElementId) {
-            const currentWorkoutTitle = workoutData[currentWeek].days[currentDay].title;
-            const prompt = `Give a short, encouraging and motivating pep talk for today's workout, which is "${currentWorkoutTitle}". Focus on consistency and pushing through. Keep it under 50 words.`;
-            callGeminiAPI(prompt, outputElementId);
-        }
-
-        // --- GOOGLE APPS SCRIPT INTEGRATION ---
-        async function sendWorkoutDataToSheets(data) {
-            // !!! IMPORTANT: REPLACE THIS URL WITH YOUR ACTUAL DEPLOYED APPS SCRIPT WEB APP URL !!!
-            const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbx10MVPI19S3EgnUEit2aMYnybaGwRKGPxbv9PqjOnz3efVR_Sa9JpyJXN3JEwYTx2NaQ/exec'; // e.g., 'https://script.google.com/macros/s/AKfycb.../exec'
-
+        // --- Firebase Initialization ---
+        const initFirebase = async () => {
             try {
-                const response = await fetch(appsScriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors', // Essential for client-side JavaScript to Apps Script without CORS issues
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                // In 'no-cors' mode, 'response' will be opaque.
-                // You won't be able to read response.json() or check response.ok directly.
-                // However, the request will still be sent.
-                console.log('Data sent to Google Sheets. Check your sheet to confirm!');
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-            } catch (error) {
-                console.error('Error sending data to Google Sheets:', error);
-                // alert('Failed to save data online. Please check your internet connection or the Apps Script URL.');
-                // Using alert() is discouraged in Canvas, so commenting out.
-            }
-        }
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
 
-        // Helper function to consolidate all day's data and send to sheets
-        function saveAllDayDataToSheets() {
-            if (!currentWeek || !currentDay) return;
-
-            const dayData = workoutData[currentWeek].days[currentDay];
-            if (!dayData) return;
-
-            const isCompleted = localStorage.getItem(`${currentWeek}-${currentDay}-completed`) === 'true';
-            const exercisesToSend = [];
-            // Collect main workout exercises for sending
-            if (dayData.mainWorkout) {
-                dayData.mainWorkout.forEach((ex, index) => {
-                    // Create a unique ID for each exercise to retrieve its stored weight
-                    // The exerciseId used for localStorage.setItem should match this pattern
-                    const exerciseIdForLocalStorage = `${currentWeek}-${currentDay.replace(/[^a-zA-Z0-9]/g, '-')}-${index}`;
-                    const storedWeight = localStorage.getItem(`weight-${exerciseIdForLocalStorage}`) || '';
-
-                    exercisesToSend.push({
-                        name: ex.name,
-                        setsReps: ex.setsReps,
-                        notes: ex.notes,
-                        weight: storedWeight // The user-entered weight
-                    });
-                });
-            }
-
-            const dataToSend = {
-                week: currentWeek,
-                day: currentDay, // e.g., "Monday, May 26, 2025"
-                workoutTitle: dayData.title,
-                weeklyFocus: workoutData[currentWeek].focus,
-                completed: isCompleted,
-                exercises: exercisesToSend // Array of exercise objects with their weights
-            };
-            if(isCompleted){  sendWorkoutDataToSheets(dataToSend);}
-        }
-    
-        // --- END GOOGLE APPS SCRIPT INTEGRATION ---
-
-
-        function updateWeight(exerciseId) {
-            const inputElement = document.getElementById(`weight-input-${exerciseId}`);
-            if (inputElement) {
-                localStorage.setItem(`weight-${exerciseId}`, inputElement.value);
-                // Trigger sending all day's data to sheets after a weight is updated
-                saveAllDayDataToSheets();
-            }
-        }
-
-        function toggleWorkoutCompletion() {
-            if (!currentWeek || !currentDay) return;
-
-            const completionKey = `${currentWeek}-${currentDay}-completed`;
-            const isCompleted = localStorage.getItem(completionKey) === 'true';
-            localStorage.setItem(completionKey, !isCompleted);
-
-            const dayCardId = `card-${currentWeek}-${currentDay.replace(/[^a-zA-Z0-9]/g, '-')}`;
-            const dayCard = document.getElementById(dayCardId);
-            if (dayCard) {
-                if (!isCompleted) {
-                    dayCard.classList.add('completed-day');
-                } else {
-                    dayCard.classList.remove('completed-day');
-                }
-            }
-
-            const completeButton = document.getElementById('complete-workout-btn');
-            if (completeButton) {
-                if (!isCompleted) {
-                    completeButton.textContent = 'Workout Completed!';
-                    completeButton.classList.add('completed');
-                } else {
-                    completeButton.textContent = 'Mark as Complete';
-                    completeButton.classList.remove('completed');
-                }
-            }
-            // Trigger sending all day's data to sheets after completion status is toggled
-            saveAllDayDataToSheets();
-        }
-
-        // Chart.js Initialization
-        function initCharts() {
-            const intensityCtx = document.getElementById('intensityChart').getContext('2d');
-            new Chart(intensityCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
-                    datasets: [{
-                        label: 'Conceptual Intensity Level',
-                        data: [60, 70, 80, 90, 95],
-                        borderColor: '#007BFF',
-                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                        fill: true,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Relative Intensity (%)'} } }
-                }
-            });
-
-            const distributionCtx = document.getElementById('workoutDistributionChart').getContext('2d');
-            new Chart(distributionCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Upper Body', 'Lower Body', 'Full Body', 'Active Recovery', 'Rest'],
-                    datasets: [{
-                        label: 'Workout Distribution',
-                        data: [2, 1, 1, 1, 2],
-                        backgroundColor: ['#007BFF', '#28A745', '#FFC107', '#17A2B8', '#6C757D'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                     plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed + ' day(s)';
-                                    }
-                                    return label;
-                                }
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                    } else {
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
                             }
+                            userId = auth.currentUser?.uid || crypto.randomUUID(); // Ensure userId is set after auth
+                        } catch (error) {
+                            console.error("Firebase authentication error:", error);
+                            userId = crypto.randomUUID(); // Fallback to a random UUID
                         }
                     }
+                    isAuthReady = true;
+                    userIdDisplay.textContent = `User ID: ${userId || 'N/A'}`;
+                    initializeFirestoreListeners(); // Start listening to Firestore once auth is ready
+                    updateUI(); // Initial UI render after auth
+                });
+            } catch (error) {
+                console.error("Failed to initialize Firebase:", error);
+                isAuthReady = true; // Ensure app can still render even if Firebase fails
+                userId = crypto.randomUUID(); // Provide a fallback userId
+                userIdDisplay.textContent = `User ID: ${userId || 'N/A'}`;
+                updateUI(); // Initial UI render even if Firebase fails
+            }
+        };
+
+        const initializeFirestoreListeners = () => {
+            if (!db || !userId || !isAuthReady) return;
+
+            // Pre-populate exercises collection if empty
+            const populateExercises = async () => {
+                try {
+                    const exercisesColRef = collection(db, `artifacts/${__app_id}/public/data/exercises`);
+                    const snapshot = await getDocs(exercisesColRef);
+                    if (snapshot.empty) {
+                        console.log("Populating exercises collection...");
+                        for (const exercise of EXERCISES_DATA) {
+                            await setDoc(doc(exercisesColRef, exercise.id), exercise);
+                        }
+                        console.log("Exercises populated.");
+                    }
+                } catch (error) {
+                    console.error("Error populating exercises:", error);
                 }
-            });
-        }
+            };
+            populateExercises();
 
+            // Fetch workout history
+            const workoutsColRef = collection(db, `artifacts/${__app_id}/users/${userId}/workouts`);
+            onSnapshot(workoutsColRef, (snapshot) => {
+                const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                logs.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
+                workoutHistory = logs;
+                renderWorkoutHistory();
+            }, (error) => console.error("Error fetching workout history:", error));
+
+            // Fetch weight logs
+            const weightColRef = collection(db, `artifacts/${__app_id}/users/${userId}/weight_progress`);
+            onSnapshot(weightColRef, (snapshot) => {
+                const logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                logs.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date ascending for chart
+                weightLogs = logs;
+                renderWeightProgress();
+            }, (error) => console.error("Error fetching weight logs:", error));
+        };
+
+        // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('overview');
-            selectWeek("Week 1");
-            initCharts();
-        });
+            currentDay = getDayOfWeek(getTodayDateString());
+            workoutForToday = WORKOUT_PLAN[currentDay];
 
+            initFirebase(); // Initialize Firebase and start auth listener
+
+            // Initial render state
+            updateUI();
+
+            // Attach event listeners to buttons
+            // Note: startWorkoutBtn is dynamic, so its listener is attached in renderDailyWorkout
+            doneExerciseBtn.addEventListener('click', handleDoneExercise);
+            submitLogBtn.addEventListener('click', submitWorkoutLog);
+            modalMessageOkBtn.addEventListener('click', hideModalMessage);
+
+            // Input change listeners
+            weightInputEl.addEventListener('input', (e) => setWeightInput(e.target.value));
+            workoutCommentEl.addEventListener('input', (e) => setWorkoutComment(e.target.value));
+        });
     </script>
 </body>
 </html>
